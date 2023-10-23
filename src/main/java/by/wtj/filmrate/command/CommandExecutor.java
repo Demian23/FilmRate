@@ -8,7 +8,7 @@ import java.util.Map;
 
 public final class CommandExecutor {
     private static final CommandExecutor instance = new CommandExecutor();
-    private final Map<CommandName, ICommand> commandNameToCommand = new HashMap<>();
+    private final Map<CommandName, Command> commandNameToCommand = new HashMap<>();
 
     private CommandExecutor(){
         commandNameToCommand.put(CommandName.Registration, new Registration());
@@ -16,7 +16,7 @@ public final class CommandExecutor {
     }
 
     public static CommandExecutor getInstance(){return instance;}
-    public ICommand getCommand(String commandName){
+    public Command getCommand(String commandName){
         CommandName name;
         try{
             name = CommandName.valueOf(commandName);
