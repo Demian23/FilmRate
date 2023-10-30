@@ -1,5 +1,6 @@
 package by.wtj.filmrate.command.impl;
 
+import by.wtj.filmrate.bean.Language;
 import by.wtj.filmrate.bean.UserCredentials;
 import by.wtj.filmrate.command.Command;
 import by.wtj.filmrate.command.CommandName;
@@ -12,6 +13,7 @@ import by.wtj.filmrate.dao.UserDAO;
 import by.wtj.filmrate.dao.exception.DAOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 public class Authorization implements Command {
     @Override
@@ -30,10 +32,17 @@ public class Authorization implements Command {
                 throw new CommandException(ex);
             }
             HttpSession session = request.getSession();
+            Object languages = session.getAttribute(SessionAttributes.LANGUAGES);
+            if(languages == null){
+                try {
+                    List<Language> availableLanguages = DAOFactory.getInstance().getTranslationDAO().getAllLanguages();
+                    session.setAttribute(SessionAttributes.LANGUAGES, availableLanguages);
+                    session.setAttribute(SessionAttributes.CURRENT_LANG_ID, availableLanguages.get(1).getId());
+                }catch(DAOException e){
+                    throw new CommandException(e);
+                }
+            }
             session.setAttribute(SessionAttributes.USER_ID, uid);
-            session.setAttribute(SessionAttributes.CURRENT_LANG, "en");
-            // TODO get id from db here
-            session.setAttribute(SessionAttributes.CURRENT_LANG_ID, 1);
             session.setAttribute(RequestParameterName.commandName, CommandName.FillFilmsInUserPage.name());
             return JspPageName.controller;
         }else
@@ -41,6 +50,11 @@ public class Authorization implements Command {
     }
 
     private boolean isValidUserCredentials(UserCredentials credentials){
-        return !credentials.getName().isEmpty() && !credentials.getPasswordHash().isEmpty();
+        //TODO for testing
+        if(credentials.getName().isEmpty() && credentials.getPasswordHash().isEmpty()){
+            credentials.setName("test");
+            credentials.setPasswordHash("1212");
+        }
+        return true;
     }
 }

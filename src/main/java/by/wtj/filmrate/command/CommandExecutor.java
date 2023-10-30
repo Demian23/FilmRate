@@ -17,6 +17,7 @@ public final class CommandExecutor {
         commandNameToCommand.put(CommandName.Authorization, new Authorization());
         commandNameToCommand.put(CommandName.FillFilmsInUserPage, new FillFilmsInUserPage());
         commandNameToCommand.put(CommandName.FilmDetails, new FilmDetails());
+        commandNameToCommand.put(CommandName.ChangeLanguage, new ChangeLanguage());
     }
 
     public Command getCommand(String commandName){

@@ -9,47 +9,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a6d5c0dc-adf3-41d8-abf5-6e9538e765f7" name="Changes" comment="Write some beans, jsp files">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/webContexts.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/bean/CompleteFilmInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/bean/UserCredentials.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/SessionAttributes.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/Authorization.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/FillFilmsInUserPage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/FilmDetails.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/DAOFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/FilmDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/TranslationDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/UserDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/exception/DAOException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLDao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLFilmDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLObjects.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLTranslationDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLUserDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/jsp/film_page.jsp" afterDir="false" />
+    <list default="true" id="a6d5c0dc-adf3-41d8-abf5-6e9538e765f7" name="Changes" comment="Implement authentication, login;&#10;user homepage;&#10;showing full film info after click on film name">
+      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/bean/Language.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/bean/TextEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/ChangeLanguage.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/bean/CompleteFilmInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/bean/CompleteFilmInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/bean/Film.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/bean/Film.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/bean/User.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/Command.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/Command.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/CommandExecutor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/CommandExecutor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/CommandName.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/CommandName.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/NoSuchCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/NoSuchCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/Registration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/Registration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/SessionAttributes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/SessionAttributes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/Authorization.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/Authorization.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/FillFilmsInUserPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/FillFilmsInUserPage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/FilmDetails.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/FilmDetails.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/controller/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/controller/Controller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/controller/JspPageName.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/controller/JspPageName.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/controller/RequestParameterName.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/controller/RequestParameterName.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/error.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/error.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/index.jsp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/jsp/authorisation.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/jsp/authorization.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/TranslationDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/TranslationDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLFilmDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLFilmDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLTranslationDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLTranslationDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/jsp/authorised_user_page.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/jsp/authorised_user_page.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/jsp/registration.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/jsp/registration.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -330,7 +308,8 @@
       <workItem from="1698432197058" duration="3650000" />
       <workItem from="1698474157190" duration="4990000" />
       <workItem from="1698479464549" duration="15640000" />
-      <workItem from="1698591431357" duration="13401000" />
+      <workItem from="1698591431357" duration="14173000" />
+      <workItem from="1698668306191" duration="7998000" />
     </task>
     <task id="LOCAL-00001" summary="Start implementing project architecture">
       <option name="closed" value="true" />
@@ -356,7 +335,15 @@
       <option name="project" value="LOCAL" />
       <updated>1698037053612</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Implement authentication, login;&#10;user homepage;&#10;showing full film info after click on film name">
+      <option name="closed" value="true" />
+      <created>1698606828569</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1698606828569</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -394,22 +381,7 @@
     <MESSAGE value="Start implementing project architecture" />
     <MESSAGE value="Write controller, delete default starting files" />
     <MESSAGE value="Write some beans, jsp files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Write some beans, jsp files" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLTranslationDAO.java</url>
-          <line>28</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLFilmDAO.java</url>
-          <line>42</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Implement authentication, login;&#10;user homepage;&#10;showing full film info after click on film name" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement authentication, login;&#10;user homepage;&#10;showing full film info after click on film name" />
   </component>
 </project>

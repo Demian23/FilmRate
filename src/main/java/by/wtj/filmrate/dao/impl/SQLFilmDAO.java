@@ -37,12 +37,14 @@ public class SQLFilmDAO implements FilmDAO {
 
     private static Film createFilm(ResultSet resultSet) throws SQLException {
         Film film = new Film();
-        film.setFilmId(resultSet.getInt("film_id"));
+        film.setFilmID(resultSet.getInt("film_id"));
         film.setOriginalTitle(resultSet.getString("original_title"));
         film.setDuration(resultSet.getString("duration"));
         film.setTextEntityID(resultSet.getInt("text_entity_id"));
         film.setAgeRating(resultSet.getString("age_rating"));
         int marksAmount = resultSet.getInt("marks_amount");
+        film.setLaunchDate(resultSet.getString("launch_date"));
+        film.setUniverseID(resultSet.getInt("universe_id"));
         if(marksAmount != 0)
             film.setAverageMark(
                     String.format("%.2f", (double) resultSet.getInt("marks_whole_score") / marksAmount));
@@ -68,14 +70,12 @@ public class SQLFilmDAO implements FilmDAO {
         obj.setResultSet(obj.getPreparedStatement().executeQuery());
         if(obj.getResultSet().next()){
            CompleteFilmInfo completeFilmInfo = new CompleteFilmInfo();
-            completeFilmInfo.getFilmAttributes(createFilm(obj.getResultSet()));
+            completeFilmInfo.film = createFilm(obj.getResultSet());
             getFilmDetails(completeFilmInfo, obj.getResultSet());
            return completeFilmInfo;
         }else throw new DAOException("No such film");
     }
     private void getFilmDetails(CompleteFilmInfo film, ResultSet rs) throws SQLException {
-        film.setLaunchDate(rs.getString("launch_date"));
-        film.setUniverseID(rs.getInt("universe_id"));
         //TODO if universe id not null get universe name
     }
 

@@ -28,6 +28,7 @@ public class Controller extends HttpServlet {
         String commandName = request.getParameter(RequestParameterName.commandName);
         if(commandName == null){
             commandName = tryGetCommandFromSession(request);
+            //TODO clean session somewhere from command
         }
         Command command = CommandExecutor.getInstance().getCommand(commandName);
         boolean isRedirect = command.isRedirect();

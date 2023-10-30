@@ -8,11 +8,16 @@ import java.util.List;
 
 @Data
 public class Film {
-    private int filmId;
-    private int textEntityID;
-    private int originalLangID;
-    private String originalTitle;
-    private String duration;
-    private String ageRating;
-    private String averageMark;
+    int filmID;
+    String launchDate;
+    String duration;
+    int universeID;
+    String universeName;
+    int textEntityID;
+    int originalLangID;
+    int localisationID;
+    String localisedTitle;
+    String originalTitle;
+    String ageRating;
+    String averageMark;
 }
