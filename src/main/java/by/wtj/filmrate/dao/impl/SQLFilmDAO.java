@@ -2,6 +2,7 @@ package by.wtj.filmrate.dao.impl;
 
 import by.wtj.filmrate.bean.CompleteFilmInfo;
 import by.wtj.filmrate.bean.Film;
+import by.wtj.filmrate.bean.LocalisedText;
 import by.wtj.filmrate.dao.FilmDAO;
 import by.wtj.filmrate.dao.exception.DAOException;
 
@@ -30,6 +31,7 @@ public class SQLFilmDAO implements FilmDAO {
         ArrayList<Film> resultList = new ArrayList<>();
         while(obj.getResultSet().next()){
             Film film = createFilm(obj.getResultSet());
+            setTextEntity(obj, film);
             resultList.add(film);
         }
         return resultList;
@@ -38,9 +40,7 @@ public class SQLFilmDAO implements FilmDAO {
     private static Film createFilm(ResultSet resultSet) throws SQLException {
         Film film = new Film();
         film.setFilmID(resultSet.getInt("film_id"));
-        film.setOriginalTitle(resultSet.getString("original_title"));
         film.setDuration(resultSet.getString("duration"));
-        film.setTextEntityID(resultSet.getInt("text_entity_id"));
         film.setAgeRating(resultSet.getString("age_rating"));
         int marksAmount = resultSet.getInt("marks_amount");
         film.setLaunchDate(resultSet.getString("launch_date"));
@@ -51,6 +51,11 @@ public class SQLFilmDAO implements FilmDAO {
         else
             film.setAverageMark("0");
         return film;
+    }
+    private void setTextEntity(SQLObjects obj, Film film) throws SQLException {
+        int textEntityId = obj.getResultSet().getInt("text_entity_id");
+        film.setText(TextEntityDAO.getTextEntity(obj, textEntityId));
+        film.setLocalisedText(new LocalisedText());
     }
 
     @Override
@@ -69,8 +74,9 @@ public class SQLFilmDAO implements FilmDAO {
         obj.getPreparedStatement().setInt(1, filmID);
         obj.setResultSet(obj.getPreparedStatement().executeQuery());
         if(obj.getResultSet().next()){
-           CompleteFilmInfo completeFilmInfo = new CompleteFilmInfo();
-            completeFilmInfo.film = createFilm(obj.getResultSet());
+            CompleteFilmInfo completeFilmInfo = new CompleteFilmInfo();
+            completeFilmInfo.setFilm(createFilm(obj.getResultSet()));
+            setTextEntity(obj, completeFilmInfo.getFilm());
             getFilmDetails(completeFilmInfo, obj.getResultSet());
            return completeFilmInfo;
         }else throw new DAOException("No such film");

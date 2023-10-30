@@ -12,5 +12,4 @@ public interface TranslationDAO {
     int getOriginalLanguageID(int textEntityID) throws DAOException;
 
     List<Language> getAllLanguages()throws DAOException;
-    List<TextEntity> getTextEntities(List<Integer> textEntitiesIDs)throws DAOException;
 }

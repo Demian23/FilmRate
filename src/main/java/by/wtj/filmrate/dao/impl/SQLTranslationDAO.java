@@ -93,31 +93,4 @@ public class SQLTranslationDAO implements TranslationDAO{
         lang.setName(rs.getString("language_name"));
         return lang;
     }
-    @Override
-    public List<TextEntity> getTextEntities(List<Integer> textEntitiesIDs) throws DAOException {
-        List<TextEntity> result = new ArrayList<>();
-        try(SQLObjects obj = new SQLObjects()){
-            obj.setConnection(sqlDao.openSQLConnection());
-            String sql = "SELECT * FROM `text_entity` WHERE `text_entity_id` = ?;";
-            obj.setPreparedStatement(obj.getConnection().prepareStatement(sql));
-            for(Integer id : textEntitiesIDs){
-                result.add(queryTextEntity(obj, id));
-            }
-        }catch (IOException | SQLException e){
-            throw new DAOException(e);
-        }
-        return result;
-    }
-
-    private TextEntity queryTextEntity(SQLObjects obj, int id) throws DAOException, SQLException {
-        obj.getPreparedStatement().setInt(1, id);
-        obj.setResultSet(obj.getPreparedStatement().executeQuery());
-        TextEntity entity = new TextEntity();
-        if(obj.getResultSet().next()){
-            entity.setTextEntityID(id);
-            entity.setOriginalLangID(obj.getResultSet().getInt("original_language_id"));
-            entity.setTextEntity(obj.getResultSet().getString("original_text"));
-        }
-        return entity;
-    }
 }

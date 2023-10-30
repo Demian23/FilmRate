@@ -8,16 +8,13 @@ import java.util.List;
 
 @Data
 public class Film {
+    TextEntity text;
+    LocalisedText localisedText;
     int filmID;
     String launchDate;
     String duration;
     int universeID;
     String universeName;
-    int textEntityID;
-    int originalLangID;
-    int localisationID;
-    String localisedTitle;
-    String originalTitle;
     String ageRating;
     String averageMark;
 }
