@@ -16,5 +16,6 @@ public class Film {
     int universeID;
     String universeName;
     String ageRating;
-    String averageMark;
+    int wholeMarksSum;
+    int wholeMarksAmount;
 }

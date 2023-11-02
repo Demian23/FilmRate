@@ -27,7 +27,7 @@
                 </a></td>
                 <td style="border: 1px solid black">${film.duration}</td>
                 <td style="border: 1px solid black">${film.ageRating}</td>
-                <td style="border: 1px solid black">${film.averageMark}</td>
+                <td style="border: 1px solid black">${film.wholeMarksSum / film.wholeMarksAmount}</td>
             </tr>
         </c:forEach>
     </table>
