@@ -20,7 +20,7 @@ public class SQLDao {
     static public SQLDao getInstance(){
         if(instance == null){
             instance = new SQLDao();
-            File credentialsFile = new File("/Users/egor/work/java/WTJ/FilmRate/src/main/resources/sql_credentials");
+            File credentialsFile = new File("/Users/yegorrusakovich/work/java/WTJ/FilmRate/src/main/resources/sql_credentials");
             Scanner scan;
             try{
                 scan = new Scanner(credentialsFile);

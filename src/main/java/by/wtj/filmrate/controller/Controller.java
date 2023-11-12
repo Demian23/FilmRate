@@ -32,7 +32,7 @@ public class Controller extends HttpServlet {
         }
         Command command = CommandExecutor.getInstance().getCommand(commandName);
         boolean isRedirect = command.isRedirect();
-        String page = null;
+        String page;
         try{
             page = command.execute(request);
         } catch (CommandException exception){
