@@ -1,5 +1,6 @@
 package by.wtj.filmrate.command.impl;
 
+import by.wtj.filmrate.bean.Access;
 import by.wtj.filmrate.bean.Language;
 import by.wtj.filmrate.bean.UserCredentials;
 import by.wtj.filmrate.command.Command;
@@ -24,7 +25,7 @@ public class Authorization implements Command {
         userCredentials.setName(request.getParameter(RequestParameterName.USER_NAME));
         userCredentials.setPasswordHash(request.getParameter(RequestParameterName.USER_PASSWORD));
         if(isValidUserCredentials(userCredentials)){
-            UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+            UserDAO userDAO = DAOFactory.getInstance().getUserDAO(Access.App);
             int uid;
             try{
                 uid = userDAO.getUserId(userCredentials);
@@ -35,7 +36,7 @@ public class Authorization implements Command {
             Object languages = session.getAttribute(SessionAttributes.LANGUAGES);
             if(languages == null){
                 try {
-                    List<Language> availableLanguages = DAOFactory.getInstance().getTranslationDAO().getAllLanguages();
+                    List<Language> availableLanguages = DAOFactory.getInstance().getTranslationDAO(Access.App).getAllLanguages();
                     session.setAttribute(SessionAttributes.LANGUAGES, availableLanguages);
                     session.setAttribute(SessionAttributes.CURRENT_LANG_ID, availableLanguages.get(1).getId());
                 }catch(DAOException e){
@@ -52,7 +53,7 @@ public class Authorization implements Command {
     private boolean isValidUserCredentials(UserCredentials credentials){
         //TODO for testing
         if(credentials.getName().isEmpty() && credentials.getPasswordHash().isEmpty()){
-            credentials.setName("test");
+            credentials.setName("egor");
             credentials.setPasswordHash("1212");
         }
         return true;

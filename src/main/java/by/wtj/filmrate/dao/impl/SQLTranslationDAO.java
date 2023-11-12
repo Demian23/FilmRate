@@ -1,87 +1,104 @@
 package by.wtj.filmrate.dao.impl;
-import by.wtj.filmrate.bean.Film;
-import by.wtj.filmrate.bean.Language;
-import by.wtj.filmrate.bean.TextEntity;
+import by.wtj.filmrate.bean.*;
 import by.wtj.filmrate.dao.TranslationDAO;
+import by.wtj.filmrate.dao.connectionPool.ConnectionPool;
+import by.wtj.filmrate.dao.connectionPool.ConnectionPoolException;
 import by.wtj.filmrate.dao.exception.DAOException;
 
+import java.io.Closeable;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class SQLTranslationDAO implements TranslationDAO{
 
-    static private final SQLDao sqlDao = SQLDao.getInstance();
-    @Override
-    public String getTranslationByLanguage(int textEntityID, String language) throws DAOException {
-        return null;
+    static private final ConnectionPool pool = ConnectionPool.getInstance();
+
+    Access accessToDataBase;
+    public SQLTranslationDAO(Access access){
+        accessToDataBase = access;
     }
 
     @Override
-    public String getTranslationByLanguageID(int textEntityID, int languageID) throws DAOException {
-        try(SQLObjects obj = new SQLObjects()){
-            return queryTranslationByLanguageID(textEntityID, languageID, obj);
-        }catch (IOException | SQLException e){
+    public void getTranslation(Translation translation) throws DAOException {
+        try (AutoClosable autoClosable = new AutoClosable()){
+            queryTranslation(autoClosable, translation);
+        }catch (IOException | SQLException | ConnectionPoolException e){
            throw new DAOException(e);
         }
     }
 
 
-    private String queryTranslationByLanguageID(int textEntityID, int languageID, SQLObjects obj) throws DAOException, SQLException {
-        obj.setConnection(sqlDao.openSQLConnection());
-        obj.setStatement(obj.getConnection().createStatement());
+    private void queryTranslation(AutoClosable closable, Translation translation) throws DAOException, SQLException, ConnectionPoolException {
+        Connection con = pool.takeConnectionWithAccess(accessToDataBase);
+        closable.add((Closeable)con);
+
         String sql = "SELECT `translation` FROM `translation` WHERE `text_entity_id` = ? AND `language_id` = ?;";
-        obj.setPreparedStatement(obj.getConnection().prepareStatement(sql));
-        obj.getPreparedStatement().setInt(1, textEntityID);
-        obj.getPreparedStatement().setInt(2, languageID);
-        obj.setResultSet(obj.getPreparedStatement().executeQuery());
-        if(obj.getResultSet().next()){
-            return obj.getResultSet().getString("translation");
-        }else throw new DAOException("No such language/textEntityID available!");
+        PreparedStatement preSt = con.prepareStatement(sql);
+        closable.add((Closeable) preSt);
+        preSt.setInt(1, translation.getTextEntityId());
+        preSt.setInt(2, translation.getLanguageId());
+
+        ResultSet rs = preSt.executeQuery();
+        closable.add((Closeable) rs);
+        if(rs.next()){
+            translation.setTranslation(rs.getString("translation"));
+        }else
+            throw new DAOException("No such translation available!");
     }
 
     @Override
     public int getOriginalLanguageID(int textEntityID) throws DAOException {
-        try(SQLObjects obj = new SQLObjects()){
-            return queryOriginalLanguageID(textEntityID, obj);
-        }catch (IOException | SQLException e){
+        try (AutoClosable autoClosable = new AutoClosable()){
+            return queryOriginalLanguageID(autoClosable, textEntityID);
+        }catch (IOException | SQLException | ConnectionPoolException e){
             throw new DAOException(e);
         }
     }
 
-    private int queryOriginalLanguageID(int textEntityID, SQLObjects obj) throws DAOException, SQLException {
-       obj.setConnection(sqlDao.openSQLConnection());
-       obj.setStatement(obj.getConnection().createStatement());
-       String sql = "SELECT `original_language_id` FROM `text_entity` WHERE `text_entity_id` = ?;";
-       obj.setPreparedStatement(obj.getConnection().prepareStatement(sql));
-       obj.getPreparedStatement().setInt(1, textEntityID);
-       obj.setResultSet(obj.getPreparedStatement().executeQuery());
-       if(obj.getResultSet().next()){
-           return Integer.parseInt(obj.getResultSet().getString("original_language_id"));
-       }else throw new DAOException("No such text entity!");
+    private int queryOriginalLanguageID(AutoClosable closable, int textEntityID) throws DAOException, SQLException, ConnectionPoolException {
+        Connection con = pool.takeConnectionWithAccess(accessToDataBase);
+        closable.add((Closeable)con);
+
+        String sql = "SELECT `original_language_id` FROM `text_entity` WHERE `text_entity_id` = ?;";
+        PreparedStatement preSt = con.prepareStatement(sql);
+        closable.add((Closeable) preSt);
+        preSt.setInt(1, textEntityID);
+
+        ResultSet rs = preSt.executeQuery();
+        closable.add((Closeable) rs);
+       if(rs.next()){
+           return rs.getInt("original_language_id");
+       }else
+           throw new DAOException("No such text entity!");
    }
 
     @Override
     public List<Language> getAllLanguages() throws DAOException {
-        try(SQLObjects obj = new SQLObjects()){
-            return queryAllLanguages(obj);
-        }catch (IOException | SQLException e){
+        try (AutoClosable autoClosable = new AutoClosable()){
+            return queryAllLanguages(autoClosable);
+        }catch (IOException | SQLException | ConnectionPoolException e){
             throw new DAOException(e);
         }
     }
 
 
-    private List<Language> queryAllLanguages(SQLObjects obj) throws DAOException, SQLException {
-        List<Language> result = new ArrayList<>();
-        obj.setConnection(sqlDao.openSQLConnection());
-        obj.setStatement(obj.getConnection().createStatement());
+    private List<Language> queryAllLanguages(AutoClosable closable) throws DAOException, SQLException, ConnectionPoolException {
+        Connection con = pool.takeConnectionWithAccess(accessToDataBase);
+        closable.add((Closeable)con);
+
         String sql = "SELECT * FROM `language`";
-        obj.setResultSet(obj.getStatement().executeQuery(sql));
-        while(obj.getResultSet().next()){
-            Language lang = createLanguage(obj.getResultSet());
+        Statement st = con.prepareStatement(sql);
+        closable.add((Closeable) st);
+
+        ResultSet rs = st.executeQuery(sql);
+        closable.add((Closeable) rs);
+
+        List<Language> result = new ArrayList<>();
+        while(rs.next()){
+            Language lang = createLanguage(rs);
             result.add(lang);
         }
         return result;

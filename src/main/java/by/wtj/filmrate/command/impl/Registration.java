@@ -1,5 +1,6 @@
 package by.wtj.filmrate.command.impl;
 
+import by.wtj.filmrate.bean.Access;
 import by.wtj.filmrate.bean.NewUser;
 import by.wtj.filmrate.command.Command;
 import by.wtj.filmrate.command.exception.CommandException;
@@ -20,7 +21,7 @@ public class Registration implements Command {
         newUser.setUserName(request.getParameter(RequestParameterName.USER_NAME));
         newUser.setNewPassword(request.getParameter(RequestParameterName.USER_PASSWORD));
         if(isValidUserData(newUser)){
-            UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
+            UserDAO userDAO = DAOFactory.getInstance().getUserDAO(Access.App);
             try{
                 userDAO.registration(newUser);
             } catch (DAOException ex){

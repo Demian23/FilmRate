@@ -1,75 +1,98 @@
-package by.wtj.filmrate.dao.sql;
+package by.wtj.filmrate.dao.connectionPool;
 
-import javax.sql.PooledConnection;
+import by.wtj.filmrate.bean.Access;
+
 import java.sql.*;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 
-public class ConnectionPool {
-    private BlockingQueue<Connection> connectionQueue;
-    private BlockingQueue<Connection> givenAwayConnectionQueue;
-    private String driverName;
-    private String url;
-    private String user;
-    private String password;
-    private int poolSize;
+public class ConnectionPoolWithSpecificAccess {
+    private BlockingQueue<Connection> connections;
+    private BlockingQueue<Connection> givenAwayConnections;
+    ConnectionCredentials credentials;
+    private final Access access;
 
-    private ConnectionPool(){
-        DBResourceManager dbResourceManager = DBResourceManager.getInstance();
-        driverName = dbResourceManager.getValue(DBParameter.DB_DRIVER);
-        url = dbResourceManager.getValue(DBParameter.DB_URL);
-        user = dbResourceManager.getValue(DBParameter.DB_USER);
-        password = dbResourceManager.getValue(DBParameter.DB_PASSWORD);
-        poolSize = Integer.parseInt(dbResourceManager.getValue(DBParameter.DB_POOL_SIZE));
+    public ConnectionPoolWithSpecificAccess(Access access, int connectionsAmount, ConnectionCredentials credentials){
+        connections = new ArrayBlockingQueue<>(connectionsAmount);
+        givenAwayConnections = new ArrayBlockingQueue<>(connectionsAmount);
+        this.access = access;
+        this.credentials = credentials;
     }
 
     public void initPoolData() throws ConnectionPoolException {
         try{
-           Class.forName(driverName);
-           connectionQueue = new ArrayBlockingQueue<>(poolSize);
-           givenAwayConnectionQueue = new ArrayBlockingQueue<>(poolSize);
-           for(int i = 0; i < poolSize; i++){
-               Connection connection = DriverManager.getConnection(url, user, password);
-           }
-        } catch (ClassNotFoundException e) {
-            throw new ConnectionPoolException("Database driver class not found", e);
+            for(int i = 0; i < connections.size(); i++){
+                Connection connection = DriverManager.getConnection(credentials.url, credentials.login, credentials.password);
+                PooledConnection pooledConnection = new PooledConnection(connection, access);
+                connections.add(pooledConnection);
+            }
         } catch (SQLException e) {
-            throw new ConnectionPoolException("Can't get connection", e);
+            throw new ConnectionPoolException("Can't get connection with access: " + access.toString(), e);
         }
     }
 
-    public void dispose(){
+    public void dispose() throws ConnectionPoolException {
         try{
-            closeConnectionQueue(givenAwayConnectionQueue);
-            closeConnectionQueue(connectionQueue);
+            closeConnectionQueue(givenAwayConnections);
+            closeConnectionQueue(connections);
         }catch(SQLException e){
-
+            throw new ConnectionPoolException("Can't close connection queue with access: " + access.toString(), e);
         }
     }
 
     private void closeConnectionQueue(BlockingQueue<Connection> queue) throws SQLException {
-       Connection connection;
-       while((connection = queue.poll())!= null){
-           if(!connection.getAutoCommit())
-               connection.commit();
-           ((PooledConnection)connection).forceClose();
-       }
+        Connection connection;
+        while((connection = queue.poll())!= null){
+            if(!connection.getAutoCommit())
+                connection.commit();
+            ((PooledConnection)connection).forceClose();
+        }
+    }
+
+    public Connection takeConnection() throws ConnectionPoolException {
+        Connection con;
+        try{
+            con = connections.take();
+            givenAwayConnections.add(con);
+        }catch(InterruptedException e){
+           throw new ConnectionPoolException("Error while connection to db with access: " + access.toString(), e);
+        }
+        return con;
     }
 
     private class PooledConnection implements Connection{
-        private Connection connection;
+        private final Connection connection;
+        Access access;
 
-        public PooledConnection(Connection con) throws SQLException {
+        public PooledConnection(Connection con, Access access) throws SQLException {
             connection = con;
             connection.setAutoCommit(true);
+            this.access = access;
         }
+
+        Access getConnectionAccess(){return access;}
+
         public void forceClose() throws SQLException {
             connection.close();
         }
+
+        @Override
+        public void close() throws SQLException {
+            if(connection.isClosed()){
+                throw new SQLException("Attempting to close already closed connection");
+            }
+            if(connection.isReadOnly())
+                connection.setReadOnly(false);
+            if(!givenAwayConnections.remove(this))
+                throw new SQLException("Error deleting from the given away connections");
+            if(!connections.offer(this)){
+                throw new SQLException("Error return connection");
+            }
+        }
+
         @Override
         public Statement createStatement() throws SQLException {
             return connection.createStatement();
@@ -110,19 +133,6 @@ public class ConnectionPool {
             connection.rollback();
         }
 
-        @Override
-        public void close() throws SQLException {
-            if(connection.isClosed()){
-                throw new SQLException("Attempting to close already closed connection")
-            }
-            if(connection.isReadOnly())
-                connection.setReadOnly(false);
-            if(!givenAwayConnectionQueue.remove(this))
-                throw new SQLException("Error deleting from the given away connections");
-            if(!connectionQueue.offer(this)){
-                throw new SQLException("Error return connection");
-            }
-        }
 
         @Override
         public boolean isClosed() throws SQLException {

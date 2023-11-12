@@ -2,35 +2,44 @@ package by.wtj.filmrate.dao.impl;
 
 import by.wtj.filmrate.bean.*;
 import by.wtj.filmrate.dao.FilmDAO;
+import by.wtj.filmrate.dao.connectionPool.ConnectionPool;
+import by.wtj.filmrate.dao.connectionPool.ConnectionPoolException;
 import by.wtj.filmrate.dao.exception.DAOException;
 
+import java.io.Closeable;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SQLFilmDAO implements FilmDAO {
-    static private final SQLDao sqlDao = SQLDao.getInstance();
+    static private final ConnectionPool pool = ConnectionPool.getInstance();
+    Access accessToDataBase;
+    public SQLFilmDAO(Access access){accessToDataBase = access;}
     @Override
     public List<Film> getAllFilms() throws DAOException{
-        try(SQLObjects sqlObjects = new SQLObjects()){
-            return queryAllFilms(sqlObjects);
-        }catch (SQLException | IOException exception){
+        try (AutoClosable autoClosable = new AutoClosable()){
+            return queryAllFilms(autoClosable);
+        }catch (SQLException | IOException | ConnectionPoolException exception){
             throw new DAOException(exception);
         }
     }
 
-    private List<Film> queryAllFilms(SQLObjects obj) throws DAOException, SQLException {
-        obj.setConnection(sqlDao.openSQLConnection());
-        obj.setStatement(obj.getConnection().createStatement());
+    private List<Film> queryAllFilms(AutoClosable autoClosable) throws DAOException, SQLException, ConnectionPoolException {
+        Connection con = pool.takeConnectionWithAccess(accessToDataBase);
+        autoClosable.add((Closeable)con);
+
+        Statement st = con.createStatement();
+        autoClosable.add((Closeable) st);
+
         String sql = "SELECT * FROM `film`";
-        obj.setResultSet(obj.getStatement().executeQuery(sql));
+        ResultSet rs = st.executeQuery(sql);
+        autoClosable.add((Closeable) rs);
         ArrayList<Film> resultList = new ArrayList<>();
-        while(obj.getResultSet().next()){
-            Film film = createFilm(obj.getResultSet());
-            setTextEntity(obj, film);
+
+        while(rs.next()){
+            Film film = createFilm(rs);
+            film.setText(TextEntityDAO.getTextEntity(con, autoClosable, rs.getInt("text_entity_id")));
             resultList.add(film);
         }
         return resultList;
@@ -47,35 +56,38 @@ public class SQLFilmDAO implements FilmDAO {
         film.setWholeMarksSum(resultSet.getInt("marks_whole_score"));
         return film;
     }
-    private void setTextEntity(SQLObjects obj, Film film) throws SQLException {
-        int textEntityId = obj.getResultSet().getInt("text_entity_id");
-        film.setText(TextEntityDAO.getTextEntity(obj, textEntityId));
-        film.setLocalisedText(new LocalisedText());
-    }
 
     @Override
     public CompleteFilmInfo getFilm(int filmId) throws DAOException{
-        try(SQLObjects sqlObjects = new SQLObjects()){
-            return queryFilm(filmId, sqlObjects);
-        }catch (SQLException | IOException exception){
+        try (AutoClosable autoClosable = new AutoClosable()){
+            return queryFilm(filmId, autoClosable);
+        }catch (SQLException | IOException | ConnectionPoolException exception){
             throw new DAOException(exception);
         }
     }
 
 
-    private CompleteFilmInfo queryFilm(int filmID, SQLObjects obj) throws DAOException, SQLException {
-        obj.setConnection(sqlDao.openSQLConnection());
+    private CompleteFilmInfo queryFilm(int filmID, AutoClosable closable) throws DAOException, SQLException, ConnectionPoolException {
+        Connection con = pool.takeConnectionWithAccess(accessToDataBase);
+        closable.add((Closeable)con);
+
         String sql = "SELECT * FROM `film` WHERE `film_id` = ?";
-        obj.setPreparedStatement(obj.getConnection().prepareStatement(sql));
-        obj.getPreparedStatement().setInt(1, filmID);
-        obj.setResultSet(obj.getPreparedStatement().executeQuery());
-        if(obj.getResultSet().next()){
+        PreparedStatement preSt = con.prepareStatement(sql);
+        closable.add((Closeable) preSt);
+        preSt.setInt(1, filmID);
+
+        ResultSet rs = preSt.executeQuery();
+        closable.add((Closeable) rs);
+
+        if(rs.next()){
             CompleteFilmInfo completeFilmInfo = new CompleteFilmInfo();
-            completeFilmInfo.setFilm(createFilm(obj.getResultSet()));
-            setTextEntity(obj, completeFilmInfo.getFilm());
-            getFilmDetails(completeFilmInfo, obj.getResultSet());
+            completeFilmInfo.setFilm(createFilm(rs));
+            completeFilmInfo.getFilm().setText(
+                    TextEntityDAO.getTextEntity(con, closable, rs.getInt("text_entity_id")));
+            getFilmDetails(completeFilmInfo, rs);
            return completeFilmInfo;
-        }else throw new DAOException("No such film");
+        }else
+            throw new DAOException("No such film");
     }
     private void getFilmDetails(CompleteFilmInfo film, ResultSet rs) throws SQLException {
         //TODO if universe id not null get universe name
@@ -83,73 +95,68 @@ public class SQLFilmDAO implements FilmDAO {
 
     @Override
     public void setUserMarkToFilm(Film film, UserMark mark) throws DAOException {
-        try(SQLObjects sqlObjects = new SQLObjects()){
-            sqlObjects.setConnection(sqlDao.openSQLConnection());
-            UserMark oldMarkValue = new UserMark();
-            if(isUserMarkExist(sqlObjects, mark, oldMarkValue)){
-                queryUpdateUserMark(sqlObjects, film, mark, oldMarkValue);
-            }else{
-                queryCreateUserMark(sqlObjects, film, mark);
-            }
-        }catch (SQLException | IOException exception){
+        try(AutoClosable autoClosable = new AutoClosable()){
+            Connection con = pool.takeConnectionWithAccess(accessToDataBase);
+            autoClosable.add((Closeable)con);
+            int oldMark = queryUserMark(con, autoClosable, mark);
+            if(oldMark != UserMark.NO_MARK)
+                queryUpdateUserMark(con, autoClosable, mark);
+            else
+                queryCreateUserMark(con, autoClosable, mark);
+            addNewMarkToFilmAverage(con, autoClosable,film, mark, oldMark);
+        }catch (SQLException | IOException | ConnectionPoolException exception){
             throw new DAOException(exception);
         }
     }
 
-    private boolean isUserMarkExist(SQLObjects obj, UserMark mark, UserMark oldMark) throws SQLException {
-        boolean result = false;
-        String sql = "SELECT * FROM `m2m_user_film_mark` WHERE `user_id`= ? AND `film_id` = ?";
-        obj.setPreparedStatement(obj.getConnection().prepareStatement(sql));
-        obj.getPreparedStatement().setInt(1, mark.getUserId());
-        obj.getPreparedStatement().setInt(2, mark.getFilmId());
-        obj.setResultSet(obj.getPreparedStatement().executeQuery());
-        if(obj.getResultSet().next()){
-            result = true;
-            oldMark.setMark(obj.getResultSet().getInt("value"));
-        }
-        return result;
-    }
-    private void queryUpdateUserMark(SQLObjects obj, Film film, UserMark mark, UserMark oldMark) throws SQLException, DAOException {
+    private void queryUpdateUserMark(Connection con, AutoClosable closable, UserMark mark) throws SQLException, DAOException {
         String sql = "UPDATE `m2m_user_film_mark` SET `value` = ? WHERE `user_id`= ? AND `film_id` = ?";
-        obj.setPreparedStatement(obj.getConnection().prepareStatement(sql));
-        obj.getPreparedStatement().setInt(1, mark.getMark());
-        obj.getPreparedStatement().setInt(2, mark.getUserId());
-        obj.getPreparedStatement().setInt(3, mark.getFilmId());
-        int rowsAffected = obj.getPreparedStatement().executeUpdate();
-        if(rowsAffected != 0){
-            addNewMarkToFilmAverage(obj, film, mark, oldMark.getMark());
-        } else{
+        PreparedStatement preSt = con.prepareStatement(sql);
+        closable.add((Closeable) preSt);
+        preSt.setInt(1, mark.getMark());
+        preSt.setInt(2, mark.getUserId());
+        preSt.setInt(3, mark.getFilmId());
+
+        int rowsAffected = preSt.executeUpdate();
+        if(rowsAffected == 0){
             throw new DAOException("No mark was affected!");
         }
     }
 
-    private void queryCreateUserMark(SQLObjects obj, Film film, UserMark mark) throws DAOException, SQLException {
+    private void queryCreateUserMark(Connection con, AutoClosable closable, UserMark mark) throws DAOException, SQLException {
         String sql = "INSERT INTO `m2m_user_film_mark` (`user_id`, `film_id`, `value`)" +
                 " VALUES(?, ?, ?);";
-        obj.setPreparedStatement(obj.getConnection().prepareStatement(sql));
-        obj.getPreparedStatement().setInt(1, mark.getUserId());
-        obj.getPreparedStatement().setInt(2, mark.getFilmId());
-        obj.getPreparedStatement().setInt(3, mark.getMark());
-        int rowsAffected = obj.getPreparedStatement().executeUpdate();
-        if(rowsAffected != 0){
-            addNewMarkToFilmAverage(obj, film, mark, UserMark.NO_MARK);
-        } else{
+
+        PreparedStatement preSt = con.prepareStatement(sql);
+        closable.add((Closeable) preSt);
+        preSt.setInt(1, mark.getUserId());
+        preSt.setInt(2, mark.getFilmId());
+        preSt.setInt(3, mark.getMark());
+
+        int rowsAffected = preSt.executeUpdate();
+        if(rowsAffected == 0){
             throw new DAOException("No mark was affected!");
         }
     }
 
-    private void addNewMarkToFilmAverage(SQLObjects obj, Film film, UserMark mark, int oldMarkValue) throws SQLException, DAOException {
-        String sql = "UPDATE `film` SET `marks_whole_score` = `marks_whole_score` + ?, `marks_amount` = `marks_amount` + ? WHERE `film_id`= ?;";
-        obj.setPreparedStatement(obj.getConnection().prepareStatement(sql));
+    private void addNewMarkToFilmAverage(Connection con, AutoClosable closable, Film film, UserMark mark,
+         int oldMarkValue) throws SQLException, DAOException {
+
         int marksAmountAddition = 1, wholeScoreAddition = mark.getMark();
         if(oldMarkValue != UserMark.NO_MARK) {
             marksAmountAddition = 0;
             wholeScoreAddition -= oldMarkValue;
         }
-        obj.getPreparedStatement().setInt(1, wholeScoreAddition);
-        obj.getPreparedStatement().setInt(2, marksAmountAddition);
-        obj.getPreparedStatement().setInt(3, mark.getFilmId());
-        int rowsAffected = obj.getPreparedStatement().executeUpdate();
+
+        String sql = "UPDATE `film` SET `marks_whole_score` = `marks_whole_score` + ?, `marks_amount` = `marks_amount` + ? WHERE `film_id`= ?;";
+
+        PreparedStatement preSt = con.prepareStatement(sql);
+        closable.add((Closeable) preSt);
+        preSt.setInt(1, wholeScoreAddition);
+        preSt.setInt(2, marksAmountAddition);
+        preSt.setInt(3, mark.getFilmId());
+        int rowsAffected = preSt.executeUpdate();
+
         if(rowsAffected != 0){
             film.setWholeMarksSum(film.getWholeMarksSum() + wholeScoreAddition);
             film.setWholeMarksAmount(film.getWholeMarksAmount() + marksAmountAddition);
@@ -160,24 +167,29 @@ public class SQLFilmDAO implements FilmDAO {
 
     @Override
     public void getUserMarkToFilm(UserMark mark) throws DAOException {
-        try(SQLObjects sqlObjects = new SQLObjects()){
-            queryUserMark(sqlObjects, mark);
-        }catch (SQLException | IOException exception){
+        try(AutoClosable autoClosable = new AutoClosable()){
+            Connection con = pool.takeConnectionWithAccess(accessToDataBase);
+            autoClosable.add((Closeable) con);
+            mark.setMark(queryUserMark(con, autoClosable, mark));
+        }catch (SQLException | IOException | ConnectionPoolException exception){
             throw new DAOException(exception);
         }
     }
 
-    private void queryUserMark(SQLObjects obj, UserMark mark) throws DAOException, SQLException {
-        obj.setConnection(sqlDao.openSQLConnection());
+    private int queryUserMark(Connection con, AutoClosable closable, UserMark mark) throws DAOException, SQLException, ConnectionPoolException {
         String sql = "SELECT `value` FROM `m2m_user_film_mark` WHERE `user_id`= ? AND `film_id` = ?";
-        obj.setPreparedStatement(obj.getConnection().prepareStatement(sql));
-        obj.getPreparedStatement().setInt(1, mark.getUserId());
-        obj.getPreparedStatement().setInt(2, mark.getFilmId());
-        obj.setResultSet(obj.getPreparedStatement().executeQuery());
-        if(obj.getResultSet().next())
-            mark.setMark(obj.getResultSet().getInt("value"));
+
+        PreparedStatement preSt = con.prepareStatement(sql);
+        closable.add((Closeable) preSt);
+        preSt.setInt(1, mark.getUserId());
+        preSt.setInt(2, mark.getFilmId());
+
+        ResultSet rs = preSt.executeQuery();
+        closable.add((Closeable) rs);
+        if(rs.next())
+            return rs.getInt("value");
         else
-            mark.setMark(UserMark.NO_MARK);
+            return UserMark.NO_MARK;
     }
 
 
@@ -185,69 +197,81 @@ public class SQLFilmDAO implements FilmDAO {
     public void updateFilm(CompleteFilmInfo filmInfo) {
 
     }
+
     @Override
     public void setUserCommentToFilm(UserComment comment) throws DAOException {
-        try(SQLObjects sqlObjects = new SQLObjects()){
-            sqlObjects.setConnection(sqlDao.openSQLConnection());
-            if(isUserCommentExist(sqlObjects, comment)){
-                queryUpdateUserComment(sqlObjects, comment);
+        try(AutoClosable autoClosable = new AutoClosable()){
+            Connection con = pool.takeConnectionWithAccess(accessToDataBase);
+            autoClosable.add((Closeable) con);
+            if(isUserCommentExist(con, autoClosable, comment)){
+                queryUpdateUserComment(con, autoClosable, comment);
             }else{
-                queryCreateUserComment(sqlObjects, comment);
+                queryCreateUserComment(con, autoClosable, comment);
             }
-        }catch (SQLException | IOException exception){
+        }catch (SQLException | IOException | ConnectionPoolException exception){
             throw new DAOException(exception);
         }
     }
 
-    private boolean isUserCommentExist(SQLObjects obj, UserComment comment) throws SQLException {
+    private boolean isUserCommentExist(Connection con, AutoClosable closable, UserComment comment) throws SQLException, DAOException {
         boolean result = false;
-        String sql = "SELECT * FROM `comment` WHERE `comment_id`= ?;";
-        obj.setPreparedStatement(obj.getConnection().prepareStatement(sql));
-        obj.getPreparedStatement().setInt(1, comment.getCommentId());
-        obj.setResultSet(obj.getPreparedStatement().executeQuery());
-        if(obj.getResultSet().next())
+        ResultSet rs = queryUserComment(con, closable, comment);
+        if(rs.next())
             result = true;
         return result;
     }
-    private void queryCreateUserComment(SQLObjects obj, UserComment comment) throws SQLException, DAOException {
+    private void queryCreateUserComment(Connection con, AutoClosable closable, UserComment comment) throws SQLException, DAOException {
         String sql = "INSERT INTO `comment` (`user_id`, `film_id`, `score`, `text`, `date`)" +
                 "VALUES(?, ?, ?, ?, ?)";
-        obj.setPreparedStatement(obj.getConnection().prepareStatement(sql));
-        obj.getPreparedStatement().setInt(1, comment.getUserId());
-        obj.getPreparedStatement().setInt(2, comment.getFilmId());
-        obj.getPreparedStatement().setInt(3, comment.getScore());
-        obj.getPreparedStatement().setString(4, comment.getText());
+
+        PreparedStatement preSt = con.prepareStatement(sql);
+        closable.add((Closeable) preSt);
+
+        preSt.setInt(1, comment.getUserId());
+        preSt.setInt(2, comment.getFilmId());
+        preSt.setInt(3, comment.getScore());
+        preSt.setString(4, comment.getText());
         Timestamp commentDate = new Timestamp(System.currentTimeMillis());
-        obj.getPreparedStatement().setTimestamp(5, commentDate);
-        int rowsAffected = obj.getPreparedStatement().executeUpdate();
+        preSt.setTimestamp(5, commentDate);
+
+        int rowsAffected = preSt.executeUpdate();
         if(rowsAffected != 0){
-            queryUserCommentId(obj, comment);
+            queryUserCommentId(con, closable, comment);
+            if(comment.getCommentId() == UserComment.NO_COMMENT_ID)
+                throw new DAOException("After insertion no comment id found");
         }else {
-            throw new DAOException("No mark was affected!");
+            throw new DAOException("No comment was affected!");
         }
     }
 
-    private void queryUserCommentId(SQLObjects obj, UserComment comment) throws SQLException {
+    private void queryUserCommentId(Connection con, AutoClosable closable, UserComment comment) throws SQLException {
         String sql = "SELECT `comment_id` FROM `comment` WHERE `user_id`= ? AND `film_id` = ?;";
-        obj.setPreparedStatement(obj.getConnection().prepareStatement(sql));
-        obj.getPreparedStatement().setInt(1, comment.getUserId());
-        obj.getPreparedStatement().setInt(2, comment.getFilmId());
-        obj.setResultSet(obj.getPreparedStatement().executeQuery());
-        if(obj.getResultSet().next())
-            comment.setCommentId(obj.getResultSet().getInt("comment_id"));
+        PreparedStatement preSt = con.prepareStatement(sql);
+        closable.add((Closeable) preSt);
+        preSt.setInt(1, comment.getUserId());
+        preSt.setInt(1, comment.getFilmId());
+
+        ResultSet rs = preSt.executeQuery();
+        closable.add((Closeable) rs);
+        if(rs.next())
+            comment.setCommentId(rs.getInt("comment_id"));
         else
             comment.setCommentId(UserComment.NO_COMMENT_ID);
     }
 
-    private void queryUpdateUserComment(SQLObjects obj, UserComment comment) throws SQLException, DAOException {
+    private void queryUpdateUserComment(Connection con, AutoClosable closable, UserComment comment) throws SQLException, DAOException {
         String sql = "UPDATE `comment` SET `score` = ?, `text` = ?, `date` = ? WHERE `comment_id`= ?;";
-        obj.setPreparedStatement(obj.getConnection().prepareStatement(sql));
-        obj.getPreparedStatement().setInt(1, comment.getScore());
-        obj.getPreparedStatement().setString(2, comment.getText());
+
+        PreparedStatement preSt = con.prepareStatement(sql);
+        closable.add((Closeable) preSt);
+
+        preSt.setInt(1, comment.getScore());
+        preSt.setString(2, comment.getText());
         Timestamp commentDate = new Timestamp(System.currentTimeMillis());
-        obj.getPreparedStatement().setTimestamp(3, commentDate);
-        obj.getPreparedStatement().setInt(4, comment.getCommentId());
-        int rowsAffected = obj.getPreparedStatement().executeUpdate();
+        preSt.setTimestamp(3, commentDate);
+        preSt.setInt(4, comment.getCommentId());
+
+        int rowsAffected = preSt.executeUpdate();
         if(rowsAffected != 0){
             comment.setDate(commentDate.toString());
         }else {
@@ -255,30 +279,37 @@ public class SQLFilmDAO implements FilmDAO {
         }
     }
 
-
     @Override
     public void getUserCommentToFilm(UserComment comment) throws DAOException {
-        try(SQLObjects sqlObjects = new SQLObjects()){
-            queryUserComment(sqlObjects, comment);
-        }catch (SQLException | IOException exception){
+        try(AutoClosable autoClosable = new AutoClosable()){
+            Connection con = pool.takeConnectionWithAccess(accessToDataBase);
+            autoClosable.add((Closeable) con);
+            fillUserComment(queryUserComment(con, autoClosable, comment), comment);
+        }catch (SQLException | IOException | ConnectionPoolException exception){
             throw new DAOException(exception);
         }
     }
 
-    private void queryUserComment(SQLObjects obj, UserComment comment) throws DAOException, SQLException {
-        obj.setConnection(sqlDao.openSQLConnection());
-        String sql = "SELECT `score`, `text`, `date`, `comment_id` FROM `comment` WHERE `user_id`= ? AND `film_id` = ?;";
-        obj.setPreparedStatement(obj.getConnection().prepareStatement(sql));
-        obj.getPreparedStatement().setInt(1, comment.getUserId());
-        obj.getPreparedStatement().setInt(2, comment.getFilmId());
-        obj.setResultSet(obj.getPreparedStatement().executeQuery());
-        if(obj.getResultSet().next()) {
-            comment.setText(obj.getResultSet().getString("text"));
-            comment.setScore(obj.getResultSet().getInt("score"));
-            comment.setDate(obj.getResultSet().getString("date"));
-            comment.setCommentId(obj.getResultSet().getInt("comment_id"));
+    private ResultSet queryUserComment(Connection con, AutoClosable closable, UserComment comment) throws DAOException, SQLException {
+        String sql = "SELECT * FROM `comment` WHERE `user_id`= ? AND `film_id` = ?;";
+        PreparedStatement preSt = con.prepareStatement(sql);
+        closable.add((Closeable) preSt);
+        preSt.setInt(1, comment.getUserId());
+        preSt.setInt(1, comment.getFilmId());
+
+        ResultSet rs = preSt.executeQuery();
+        closable.add((Closeable) rs);
+        return rs;
+    }
+    private void fillUserComment(ResultSet rs, UserComment comment) throws SQLException {
+        if(rs.next()){
+            comment.setCommentId(rs.getInt("comment_id"));
+            comment.setScore(rs.getInt("score"));
+            comment.setDate(rs.getTimestamp("date").toString());
+            comment.setText(rs.getString("text"));
         }else{
             comment.setCommentId(UserComment.NO_COMMENT_ID);
         }
+
     }
 }

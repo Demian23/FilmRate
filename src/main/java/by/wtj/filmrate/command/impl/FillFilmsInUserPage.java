@@ -1,8 +1,6 @@
 package by.wtj.filmrate.command.impl;
 
-import by.wtj.filmrate.bean.Film;
-import by.wtj.filmrate.bean.LocalisedText;
-import by.wtj.filmrate.bean.TextEntity;
+import by.wtj.filmrate.bean.*;
 import by.wtj.filmrate.command.Command;
 import by.wtj.filmrate.command.SessionAttributes;
 import by.wtj.filmrate.command.exception.CommandException;
@@ -23,35 +21,40 @@ public class FillFilmsInUserPage implements Command {
     public boolean isRedirect(){return true;}
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
-        FilmDAO filmDAO = DAOFactory.getInstance().getFilmDAO();
-        List<Film> films;
         HttpSession session = request.getSession();
         int languageID = Integer.parseInt(session.getAttribute(SessionAttributes.CURRENT_LANG_ID).toString());
+        Object accessInSession = session.getAttribute(SessionAttributes.CURRENT_ACCESS);
+        Access access = accessInSession != null ? (Access) accessInSession : Access.App;
+
+        FilmDAO filmDAO = DAOFactory.getInstance().getFilmDAO(access);
+        TranslationDAO translationDAO = DAOFactory.getInstance().getTranslationDAO(access);
+        List<Film> films;
         // TODO not all films only part
         try{
             // TODO check if they are in session
             films = filmDAO.getAllFilms();
-            localiseFilms(films, languageID);
+            localiseFilms(translationDAO, films, languageID);
         }catch(DAOException e){
             throw new CommandException(e);
         }
         session.setAttribute(RequestParameterName.FILMS, films);
         return JspPageName.userPage;
     }
-    private void localiseFilms(List<Film> films, int languageID) throws DAOException {
+    private void localiseFilms(TranslationDAO translationDAO, List<Film> films, int languageID) throws DAOException {
         for(Film film : films) {
-           localiseFilm(film, languageID);
+           localiseFilm(translationDAO, film, languageID);
         }
     }
-    static public void localiseFilm(Film film, int languageId) throws DAOException {
+    static public void localiseFilm(TranslationDAO translationDAO, Film film, int languageId) throws DAOException {
         LocalisedText localisedText = film.getLocalisedText();
-        TranslationDAO translationDAO = DAOFactory.getInstance().getTranslationDAO();
         TextEntity filmText = film.getText();
         if (localisedText.getLocalisedID() != languageId) {
-            localisedText.setLocalisedID(languageId);
             if (filmText.getOriginalLangID() != languageId) {
-                String localisedTitle = translationDAO.getTranslationByLanguageID(filmText.getTextEntityID(), languageId);
-                localisedText.setLocalisedText(localisedTitle);
+                Translation translation = new Translation();
+                translation.setTextEntityId(filmText.getTextEntityID());
+                translation.setLanguageId(languageId);
+                translationDAO.getTranslation(translation);
+                localisedText.setLocalisedText(translation.getTranslation());
             }
         }
         if(localisedText.getLocalisedText() == null)
