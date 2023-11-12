@@ -1,12 +1,18 @@
 package by.wtj.filmrate.dao;
 
 import by.wtj.filmrate.bean.Access;
+import by.wtj.filmrate.dao.connectionpool.ConnectionCredentials;
+import by.wtj.filmrate.dao.connectionpool.ConnectionPool;
+import by.wtj.filmrate.dao.connectionpool.exception.ConnectionPoolException;
 import by.wtj.filmrate.dao.impl.SQLFilmDAO;
 import by.wtj.filmrate.dao.impl.SQLTranslationDAO;
 import by.wtj.filmrate.dao.impl.SQLUserDAO;
 import lombok.Getter;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import static java.util.Map.*;
 
 public class DAOFactory {
     @Getter
@@ -17,17 +23,21 @@ public class DAOFactory {
     private final Map<Access, TranslationDAO> translationDAOWithDifferentAccess;
 
     private DAOFactory(){
-        userDAOWithDifferentAccess = Map.of(
-            Access.App, new SQLUserDAO(Access.App),
-            Access.User, new SQLUserDAO(Access.User),
-            Access.Admin, new SQLUserDAO(Access.Admin)
-        );
-        filmDAOWithDifferentAccess = Map.of(
+        try {
+            ConnectionPool.getInstance().initPoolData();
+        }catch(ConnectionPoolException e){
+            throw new RuntimeException(e);
+        }
+        userDAOWithDifferentAccess = new HashMap<>();
+        userDAOWithDifferentAccess.put(Access.App, new SQLUserDAO(Access.App));
+        userDAOWithDifferentAccess.put(Access.User, new SQLUserDAO(Access.User));
+        userDAOWithDifferentAccess.put(Access.Admin, new SQLUserDAO(Access.Admin));
+        filmDAOWithDifferentAccess = of(
                 Access.App, new SQLFilmDAO(Access.App),
                 Access.User, new SQLFilmDAO(Access.User),
                 Access.Admin, new SQLFilmDAO(Access.Admin)
         );
-        translationDAOWithDifferentAccess = Map.of(
+        translationDAOWithDifferentAccess = of(
                 Access.App, new SQLTranslationDAO(Access.App),
                 Access.User, new SQLTranslationDAO(Access.User),
                 Access.Admin, new SQLTranslationDAO(Access.Admin)

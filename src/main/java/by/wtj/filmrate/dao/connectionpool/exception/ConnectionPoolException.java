@@ -1,4 +1,4 @@
-package by.wtj.filmrate.dao.connectionPool;
+package by.wtj.filmrate.dao.connectionpool.exception;
 
 public class ConnectionPoolException extends Exception {
     private static final long serialVersionUID = 1L;

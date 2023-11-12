@@ -1,6 +1,7 @@
-package by.wtj.filmrate.dao.connectionPool;
+package by.wtj.filmrate.dao.connectionpool;
 
 import by.wtj.filmrate.bean.Access;
+import by.wtj.filmrate.dao.connectionpool.exception.ConnectionPoolException;
 import lombok.Getter;
 
 import java.sql.*;
@@ -13,7 +14,6 @@ public class ConnectionPool {
     Map<Access, ConnectionPoolWithSpecificAccess> connectionPools;
 
     private ConnectionPool(){
-        Locale.setDefault(Locale.ENGLISH);
         DBResourceManager dbResourceManager = DBResourceManager.getInstance();
         driverName = dbResourceManager.getValue(DBParameter.DB_DRIVER);
         String url = dbResourceManager.getValue(DBParameter.DB_URL);

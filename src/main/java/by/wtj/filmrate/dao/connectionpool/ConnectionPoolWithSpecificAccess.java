@@ -1,6 +1,7 @@
-package by.wtj.filmrate.dao.connectionPool;
+package by.wtj.filmrate.dao.connectionpool;
 
 import by.wtj.filmrate.bean.Access;
+import by.wtj.filmrate.dao.connectionpool.exception.ConnectionPoolException;
 
 import java.sql.*;
 import java.util.Map;
@@ -65,15 +66,11 @@ public class ConnectionPoolWithSpecificAccess {
 
     private class PooledConnection implements Connection{
         private final Connection connection;
-        Access access;
 
         public PooledConnection(Connection con, Access access) throws SQLException {
             connection = con;
             connection.setAutoCommit(true);
-            this.access = access;
         }
-
-        Access getConnectionAccess(){return access;}
 
         public void forceClose() throws SQLException {
             connection.close();

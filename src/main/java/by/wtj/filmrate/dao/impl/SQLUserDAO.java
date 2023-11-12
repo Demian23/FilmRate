@@ -4,14 +4,13 @@ import by.wtj.filmrate.bean.Access;
 import by.wtj.filmrate.bean.NewUser;
 import by.wtj.filmrate.bean.UserCredentials;
 import by.wtj.filmrate.dao.UserDAO;
-import by.wtj.filmrate.dao.connectionPool.ConnectionPool;
-import by.wtj.filmrate.dao.connectionPool.ConnectionPoolException;
+import by.wtj.filmrate.dao.connectionpool.ConnectionPool;
+import by.wtj.filmrate.dao.connectionpool.exception.ConnectionPoolException;
 import by.wtj.filmrate.dao.exception.DAOException;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
-import java.util.Objects;
 
 public class SQLUserDAO implements UserDAO {
 

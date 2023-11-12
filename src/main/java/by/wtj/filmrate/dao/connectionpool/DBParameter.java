@@ -1,4 +1,4 @@
-package by.wtj.filmrate.dao.connectionPool;
+package by.wtj.filmrate.dao.connectionpool;
 
 public final class DBParameter {
     private DBParameter(){}

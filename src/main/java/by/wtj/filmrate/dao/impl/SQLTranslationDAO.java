@@ -1,8 +1,8 @@
 package by.wtj.filmrate.dao.impl;
 import by.wtj.filmrate.bean.*;
 import by.wtj.filmrate.dao.TranslationDAO;
-import by.wtj.filmrate.dao.connectionPool.ConnectionPool;
-import by.wtj.filmrate.dao.connectionPool.ConnectionPoolException;
+import by.wtj.filmrate.dao.connectionpool.ConnectionPool;
+import by.wtj.filmrate.dao.connectionpool.exception.ConnectionPoolException;
 import by.wtj.filmrate.dao.exception.DAOException;
 
 import java.io.Closeable;
