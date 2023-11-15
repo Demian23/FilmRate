@@ -9,18 +9,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a6d5c0dc-adf3-41d8-abf5-6e9538e765f7" name="Changes" comment="Add different access rights to different users, integrate them with ConnectionPool and integrate ConnectionPool with all DAO code">
+    <list default="true" id="a6d5c0dc-adf3-41d8-abf5-6e9538e765f7" name="Changes" comment="Fix bundle not found, but now ConnectionPoolException not found">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/DAOFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/DAOFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionPool/ConnectionCredentials.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/ConnectionCredentials.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionPool/ConnectionPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/ConnectionPool.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionPool/ConnectionPoolException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/exception/ConnectionPoolException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionPool/ConnectionPoolWithSpecificAccess.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/ConnectionPoolWithSpecificAccess.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionPool/DBParameter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/DBParameter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionPool/DBResourceManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/DBResourceManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLFilmDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLFilmDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLTranslationDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLTranslationDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLUserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLUserDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/ConnectionPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/ConnectionPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/DBResourceManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/DBResourceManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,8 +92,8 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionPool" />
       <recent name="$PROJECT_DIR$/src/main/resources" />
+      <recent name="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionPool" />
       <recent name="$PROJECT_DIR$/src/main/webapp/jsp" />
       <recent name="$PROJECT_DIR$/src/main/webapp" />
     </key>
@@ -316,7 +309,8 @@
       <workItem from="1698943733444" duration="598000" />
       <workItem from="1699033911785" duration="3878000" />
       <workItem from="1699771184611" duration="16946000" />
-      <workItem from="1699816534230" duration="2488000" />
+      <workItem from="1699816534230" duration="2700000" />
+      <workItem from="1700034731735" duration="381000" />
     </task>
     <task id="LOCAL-00001" summary="Start implementing project architecture">
       <option name="closed" value="true" />
@@ -374,7 +368,15 @@
       <option name="project" value="LOCAL" />
       <updated>1699788501207</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Fix bundle not found, but now ConnectionPoolException not found">
+      <option name="closed" value="true" />
+      <created>1699819256020</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1699819256020</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -416,7 +418,8 @@
     <MESSAGE value="Implemented language changing" />
     <MESSAGE value="Small refactor; add Person; changed internal beans structure" />
     <MESSAGE value="Add different access rights to different users, integrate them with ConnectionPool and integrate ConnectionPool with all DAO code" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add different access rights to different users, integrate them with ConnectionPool and integrate ConnectionPool with all DAO code" />
+    <MESSAGE value="Fix bundle not found, but now ConnectionPoolException not found" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix bundle not found, but now ConnectionPoolException not found" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -435,11 +438,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLUserDAO.java</url>
           <line>16</line>
           <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/DAOFactory.java</url>
-          <line>26</line>
-          <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/Authorization.java</url>

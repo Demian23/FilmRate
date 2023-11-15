@@ -9,7 +9,7 @@ public class DBResourceManager {
     @Getter
     private final static DBResourceManager instance = new DBResourceManager();
 
-    static private final ResourceBundle bundle = ResourceBundle.getBundle("by.wtj.filmrate.dao.connectionpool.db", Locale.ENGLISH);
+    static private final ResourceBundle bundle = ResourceBundle.getBundle("db", Locale.ENGLISH);
 
 
     public String getValue(String key){return bundle.getString(key);}

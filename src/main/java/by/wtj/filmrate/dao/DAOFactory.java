@@ -23,15 +23,11 @@ public class DAOFactory {
     private final Map<Access, TranslationDAO> translationDAOWithDifferentAccess;
 
     private DAOFactory(){
-        try {
-            ConnectionPool.getInstance().initPoolData();
-        }catch(ConnectionPoolException e){
-            throw new RuntimeException(e);
-        }
-        userDAOWithDifferentAccess = new HashMap<>();
-        userDAOWithDifferentAccess.put(Access.App, new SQLUserDAO(Access.App));
-        userDAOWithDifferentAccess.put(Access.User, new SQLUserDAO(Access.User));
-        userDAOWithDifferentAccess.put(Access.Admin, new SQLUserDAO(Access.Admin));
+        userDAOWithDifferentAccess = of(
+                Access.App, new SQLUserDAO(Access.App),
+                Access.User, new SQLUserDAO(Access.User),
+                Access.Admin, new SQLUserDAO(Access.Admin)
+        );
         filmDAOWithDifferentAccess = of(
                 Access.App, new SQLFilmDAO(Access.App),
                 Access.User, new SQLFilmDAO(Access.User),

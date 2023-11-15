@@ -8,8 +8,7 @@ import java.sql.*;
 import java.util.*;
 
 public class ConnectionPool {
-    @Getter
-    static private ConnectionPool instance = new ConnectionPool();
+    static private ConnectionPool instance = null;
     private final String driverName;
     Map<Access, ConnectionPoolWithSpecificAccess> connectionPools;
 
@@ -43,6 +42,18 @@ public class ConnectionPool {
                 )
             )
         );
+    }
+
+    static public ConnectionPool getInstance(){
+        if(instance == null){
+            instance = new ConnectionPool();
+            try {
+                instance.initPoolData();
+            }catch(ConnectionPoolException e){
+                throw new RuntimeException(e);
+            }
+        }
+        return instance;
     }
 
     public void initPoolData() throws ConnectionPoolException {
