@@ -15,8 +15,10 @@ public class ConnectionPoolWithSpecificAccess {
     private BlockingQueue<Connection> givenAwayConnections;
     ConnectionCredentials credentials;
     private final Access access;
+    static private int connnectionSize;
 
     public ConnectionPoolWithSpecificAccess(Access access, int connectionsAmount, ConnectionCredentials credentials){
+        connnectionSize = connectionsAmount;
         connections = new ArrayBlockingQueue<>(connectionsAmount);
         givenAwayConnections = new ArrayBlockingQueue<>(connectionsAmount);
         this.access = access;
@@ -25,7 +27,7 @@ public class ConnectionPoolWithSpecificAccess {
 
     public void initPoolData() throws ConnectionPoolException {
         try{
-            for(int i = 0; i < connections.size(); i++){
+            for(int i = 0; i < connnectionSize; i++){
                 Connection connection = DriverManager.getConnection(credentials.url, credentials.login, credentials.password);
                 PooledConnection pooledConnection = new PooledConnection(connection, access);
                 connections.add(pooledConnection);

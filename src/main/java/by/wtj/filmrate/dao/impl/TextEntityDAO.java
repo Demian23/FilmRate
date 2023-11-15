@@ -3,20 +3,19 @@ package by.wtj.filmrate.dao.impl;
 import by.wtj.filmrate.bean.TextEntity;
 import by.wtj.filmrate.dao.exception.DAOException;
 
-import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class TextEntityDAO {
-    static public TextEntity getTextEntity(Connection con, AutoClosable closable, int textEntityId) throws SQLException, DAOException {
+    static public TextEntity getTextEntity(Connection con, AutoClosableList closable, int textEntityId) throws SQLException, DAOException {
         String sql = "SELECT * FROM `text_entity` WHERE `text_entity_id` = ?;";
         PreparedStatement preSt = con.prepareStatement(sql);
-        closable.add((Closeable) preSt);
+        closable.add( preSt);
         preSt.setInt(1, textEntityId);
         ResultSet rs = preSt.executeQuery();
-        closable.add((Closeable) rs);
+        closable.add( rs);
 
         TextEntity entity = new TextEntity();
         if(rs.next()){

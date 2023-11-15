@@ -21,33 +21,57 @@ public class Authorization implements Command {
     public boolean isRedirect(){return true;}
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
-        UserCredentials userCredentials = new UserCredentials();
-        userCredentials.setName(request.getParameter(RequestParameterName.USER_NAME));
-        userCredentials.setPasswordHash(request.getParameter(RequestParameterName.USER_PASSWORD));
-        if(isValidUserCredentials(userCredentials)){
-            UserDAO userDAO = DAOFactory.getInstance().getUserDAO(Access.App);
-            int uid;
-            try{
-                uid = userDAO.getUserId(userCredentials);
-            } catch (DAOException ex){
-                throw new CommandException(ex);
-            }
+        UserDAO userDAO = getUserDAO();
+        UserCredentials credentials = setUserCredentials(request);
+        if(isValidUserCredentials(credentials)){
             HttpSession session = request.getSession();
-            Object languages = session.getAttribute(SessionAttributes.LANGUAGES);
-            if(languages == null){
-                try {
-                    List<Language> availableLanguages = DAOFactory.getInstance().getTranslationDAO(Access.App).getAllLanguages();
-                    session.setAttribute(SessionAttributes.LANGUAGES, availableLanguages);
-                    session.setAttribute(SessionAttributes.CURRENT_LANG_ID, availableLanguages.get(1).getId());
-                }catch(DAOException e){
-                    throw new CommandException(e);
-                }
-            }
-            session.setAttribute(SessionAttributes.USER_ID, uid);
+            retrieveUserIdFromDAOAndSaveInSession(userDAO, credentials, session);
+            trySetAllLanguagesInSession(session);
             session.setAttribute(RequestParameterName.commandName, CommandName.FillFilmsInUserPage.name());
             return JspPageName.controller;
         }else
             throw new CommandException("Invalid credentials.");
+    }
+
+    private UserDAO getUserDAO() throws CommandException {
+        DAOFactory factory;
+        try{
+            factory = DAOFactory.getInstance();
+        }catch (DAOException e){
+            throw new CommandException(e);
+        }
+        return factory.getUserDAO(Access.App);
+    }
+
+    private UserCredentials setUserCredentials(HttpServletRequest request){
+        UserCredentials userCredentials = new UserCredentials();
+        userCredentials.setName(request.getParameter(RequestParameterName.USER_NAME));
+        userCredentials.setPasswordHash(request.getParameter(RequestParameterName.USER_PASSWORD));
+        return userCredentials;
+    }
+    private void retrieveUserIdFromDAOAndSaveInSession(UserDAO userDAO, UserCredentials credentials,
+       HttpSession session) throws CommandException {
+        int uid;
+        try{
+            uid = userDAO.getUserId(credentials);
+        } catch (DAOException ex){
+            throw new CommandException(ex);
+        }
+        session.setAttribute(SessionAttributes.USER_ID, uid);
+    }
+
+    private void trySetAllLanguagesInSession(HttpSession session) throws CommandException {
+        Object languages = session.getAttribute(SessionAttributes.LANGUAGES);
+        if(languages == null){
+            List<Language> availableLanguages;
+            try {
+                availableLanguages = DAOFactory.getInstance().getTranslationDAO(Access.App).getAllLanguages();
+            }catch(DAOException e){
+                throw new CommandException(e);
+            }
+            session.setAttribute(SessionAttributes.LANGUAGES, availableLanguages);
+            session.setAttribute(SessionAttributes.CURRENT_LANG_ID, availableLanguages.get(1).getId());
+        }
     }
 
     private boolean isValidUserCredentials(UserCredentials credentials){

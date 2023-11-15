@@ -16,6 +16,7 @@ public class Registration implements Command {
     public boolean isRedirect(){return true;}
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
+        /*
         NewUser newUser = new NewUser();
         newUser.setMail(request.getParameter(RequestParameterName.USER_MAIL));
         newUser.setUserName(request.getParameter(RequestParameterName.USER_NAME));
@@ -30,6 +31,8 @@ public class Registration implements Command {
         }else{
             throw new CommandException("Wrong user data");
         }
+
+         */
         return JspPageName.authorizationPage;
     }
 

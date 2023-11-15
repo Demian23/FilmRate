@@ -4,6 +4,7 @@ import by.wtj.filmrate.bean.Access;
 import by.wtj.filmrate.dao.connectionpool.ConnectionCredentials;
 import by.wtj.filmrate.dao.connectionpool.ConnectionPool;
 import by.wtj.filmrate.dao.connectionpool.exception.ConnectionPoolException;
+import by.wtj.filmrate.dao.exception.DAOException;
 import by.wtj.filmrate.dao.impl.SQLFilmDAO;
 import by.wtj.filmrate.dao.impl.SQLTranslationDAO;
 import by.wtj.filmrate.dao.impl.SQLUserDAO;
@@ -15,8 +16,8 @@ import java.util.Map;
 import static java.util.Map.*;
 
 public class DAOFactory {
-    @Getter
-    private static final DAOFactory instance = new DAOFactory();
+    private static DAOFactory instance = null;
+    private static ConnectionPool pool = null;
 
     private final Map<Access, UserDAO> userDAOWithDifferentAccess;
     private final Map<Access, FilmDAO> filmDAOWithDifferentAccess;
@@ -24,20 +25,32 @@ public class DAOFactory {
 
     private DAOFactory(){
         userDAOWithDifferentAccess = of(
-                Access.App, new SQLUserDAO(Access.App),
-                Access.User, new SQLUserDAO(Access.User),
-                Access.Admin, new SQLUserDAO(Access.Admin)
+                Access.App, new SQLUserDAO(Access.App, pool),
+                Access.User, new SQLUserDAO(Access.User, pool),
+                Access.Admin, new SQLUserDAO(Access.Admin, pool)
         );
         filmDAOWithDifferentAccess = of(
-                Access.App, new SQLFilmDAO(Access.App),
-                Access.User, new SQLFilmDAO(Access.User),
-                Access.Admin, new SQLFilmDAO(Access.Admin)
+                Access.App, new SQLFilmDAO(Access.App, pool),
+                Access.User, new SQLFilmDAO(Access.User, pool),
+                Access.Admin, new SQLFilmDAO(Access.Admin, pool)
         );
         translationDAOWithDifferentAccess = of(
-                Access.App, new SQLTranslationDAO(Access.App),
-                Access.User, new SQLTranslationDAO(Access.User),
-                Access.Admin, new SQLTranslationDAO(Access.Admin)
+                Access.App, new SQLTranslationDAO(Access.App, pool),
+                Access.User, new SQLTranslationDAO(Access.User, pool),
+                Access.Admin, new SQLTranslationDAO(Access.Admin, pool)
         );
+    }
+
+    public static DAOFactory getInstance() throws DAOException {
+        if(pool == null)
+            try {
+                pool = ConnectionPool.getInstance();
+            }catch(ConnectionPoolException e){
+                throw new DAOException(e);
+            }
+        if(instance == null)
+            instance = new DAOFactory();
+        return instance;
     }
 
     public UserDAO getUserDAO(Access access){

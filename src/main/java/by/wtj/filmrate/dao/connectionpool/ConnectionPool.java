@@ -44,14 +44,10 @@ public class ConnectionPool {
         );
     }
 
-    static public ConnectionPool getInstance(){
+    static public ConnectionPool getInstance() throws ConnectionPoolException {
         if(instance == null){
             instance = new ConnectionPool();
-            try {
-                instance.initPoolData();
-            }catch(ConnectionPoolException e){
-                throw new RuntimeException(e);
-            }
+            instance.initPoolData();
         }
         return instance;
     }

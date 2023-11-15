@@ -22,12 +22,12 @@ public class FillFilmsInUserPage implements Command {
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
         HttpSession session = request.getSession();
-        int languageID = Integer.parseInt(session.getAttribute(SessionAttributes.CURRENT_LANG_ID).toString());
-        Object accessInSession = session.getAttribute(SessionAttributes.CURRENT_ACCESS);
-        Access access = accessInSession != null ? (Access) accessInSession : Access.App;
+        DAOFactory factory = getFactory();
+        Access access = getCurrentAccess(session);
 
-        FilmDAO filmDAO = DAOFactory.getInstance().getFilmDAO(access);
-        TranslationDAO translationDAO = DAOFactory.getInstance().getTranslationDAO(access);
+        FilmDAO filmDAO = factory.getFilmDAO(access);
+        TranslationDAO translationDAO = factory.getTranslationDAO(access);
+        int languageID = (int)session.getAttribute(SessionAttributes.CURRENT_LANG_ID);
         List<Film> films;
         // TODO not all films only part
         try{
@@ -40,12 +40,29 @@ public class FillFilmsInUserPage implements Command {
         session.setAttribute(RequestParameterName.FILMS, films);
         return JspPageName.userPage;
     }
+    DAOFactory getFactory() throws CommandException {
+        DAOFactory factory;
+        try{
+            factory = DAOFactory.getInstance();
+        }catch (DAOException e){
+            throw new CommandException(e);
+        }
+        return factory;
+    }
+
+    Access getCurrentAccess(HttpSession session){
+        Object accessInSession = session.getAttribute(SessionAttributes.CURRENT_ACCESS);
+        return accessInSession != null ? (Access) accessInSession : Access.App;
+    }
+
     private void localiseFilms(TranslationDAO translationDAO, List<Film> films, int languageID) throws DAOException {
         for(Film film : films) {
            localiseFilm(translationDAO, film, languageID);
         }
     }
     static public void localiseFilm(TranslationDAO translationDAO, Film film, int languageId) throws DAOException {
+        if(film.getLocalisedText() == null)
+            film.setLocalisedText(new LocalisedText());
         LocalisedText localisedText = film.getLocalisedText();
         TextEntity filmText = film.getText();
         if (localisedText.getLocalisedID() != languageId) {

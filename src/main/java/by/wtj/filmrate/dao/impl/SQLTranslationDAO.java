@@ -13,17 +13,19 @@ import java.util.List;
 
 
 public class SQLTranslationDAO implements TranslationDAO{
-
-    static private final ConnectionPool pool = ConnectionPool.getInstance();
+    static private ConnectionPool pool = null;
 
     Access accessToDataBase;
-    public SQLTranslationDAO(Access access){
+    public SQLTranslationDAO(Access access, ConnectionPool poolInstance){
         accessToDataBase = access;
+        if(pool == null){
+            pool = poolInstance;
+        }
     }
 
     @Override
     public void getTranslation(Translation translation) throws DAOException {
-        try (AutoClosable autoClosable = new AutoClosable()){
+        try (AutoClosableList autoClosable = new AutoClosableList()){
             queryTranslation(autoClosable, translation);
         }catch (IOException | SQLException | ConnectionPoolException e){
            throw new DAOException(e);
@@ -31,18 +33,18 @@ public class SQLTranslationDAO implements TranslationDAO{
     }
 
 
-    private void queryTranslation(AutoClosable closable, Translation translation) throws DAOException, SQLException, ConnectionPoolException {
+    private void queryTranslation(AutoClosableList closable, Translation translation) throws DAOException, SQLException, ConnectionPoolException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
-        closable.add((Closeable)con);
+        closable.add(con);
 
         String sql = "SELECT `translation` FROM `translation` WHERE `text_entity_id` = ? AND `language_id` = ?;";
         PreparedStatement preSt = con.prepareStatement(sql);
-        closable.add((Closeable) preSt);
+        closable.add(preSt);
         preSt.setInt(1, translation.getTextEntityId());
         preSt.setInt(2, translation.getLanguageId());
 
         ResultSet rs = preSt.executeQuery();
-        closable.add((Closeable) rs);
+        closable.add(rs);
         if(rs.next()){
             translation.setTranslation(rs.getString("translation"));
         }else
@@ -51,24 +53,24 @@ public class SQLTranslationDAO implements TranslationDAO{
 
     @Override
     public int getOriginalLanguageID(int textEntityID) throws DAOException {
-        try (AutoClosable autoClosable = new AutoClosable()){
+        try (AutoClosableList autoClosable = new AutoClosableList()){
             return queryOriginalLanguageID(autoClosable, textEntityID);
         }catch (IOException | SQLException | ConnectionPoolException e){
             throw new DAOException(e);
         }
     }
 
-    private int queryOriginalLanguageID(AutoClosable closable, int textEntityID) throws DAOException, SQLException, ConnectionPoolException {
+    private int queryOriginalLanguageID(AutoClosableList closable, int textEntityID) throws DAOException, SQLException, ConnectionPoolException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
-        closable.add((Closeable)con);
+        closable.add(con);
 
         String sql = "SELECT `original_language_id` FROM `text_entity` WHERE `text_entity_id` = ?;";
         PreparedStatement preSt = con.prepareStatement(sql);
-        closable.add((Closeable) preSt);
+        closable.add( preSt);
         preSt.setInt(1, textEntityID);
 
         ResultSet rs = preSt.executeQuery();
-        closable.add((Closeable) rs);
+        closable.add( rs);
        if(rs.next()){
            return rs.getInt("original_language_id");
        }else
@@ -77,7 +79,7 @@ public class SQLTranslationDAO implements TranslationDAO{
 
     @Override
     public List<Language> getAllLanguages() throws DAOException {
-        try (AutoClosable autoClosable = new AutoClosable()){
+        try (AutoClosableList autoClosable = new AutoClosableList()){
             return queryAllLanguages(autoClosable);
         }catch (IOException | SQLException | ConnectionPoolException e){
             throw new DAOException(e);
@@ -85,16 +87,16 @@ public class SQLTranslationDAO implements TranslationDAO{
     }
 
 
-    private List<Language> queryAllLanguages(AutoClosable closable) throws DAOException, SQLException, ConnectionPoolException {
+    private List<Language> queryAllLanguages(AutoClosableList closable) throws DAOException, SQLException, ConnectionPoolException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
-        closable.add((Closeable)con);
+        closable.add(con);
 
         String sql = "SELECT * FROM `language`";
         Statement st = con.prepareStatement(sql);
-        closable.add((Closeable) st);
+        closable.add(st);
 
         ResultSet rs = st.executeQuery(sql);
-        closable.add((Closeable) rs);
+        closable.add( rs);
 
         List<Language> result = new ArrayList<>();
         while(rs.next()){

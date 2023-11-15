@@ -23,13 +23,23 @@ public class SetUserMarkAndComment implements Command {
     }
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
-        HttpSession session = request.getSession();
-        Object accessInSession = session.getAttribute(SessionAttributes.CURRENT_ACCESS);
-        Access access = accessInSession != null ? (Access) accessInSession : Access.App;
-        FilmDAO filmDAO = DAOFactory.getInstance().getFilmDAO(access);
+        FilmDAO filmDAO = getFilmDAO(request);
         tryChangeMark(request, filmDAO);
         tryChangeComment(request, filmDAO);
         return JspPageName.filmPage;
+    }
+
+    FilmDAO getFilmDAO(HttpServletRequest request) throws CommandException {
+        DAOFactory factory;
+        try{
+            factory = DAOFactory.getInstance();
+        }catch (DAOException e){
+            throw new CommandException(e);
+        }
+        HttpSession session = request.getSession();
+        Object accessInSession = session.getAttribute(SessionAttributes.CURRENT_ACCESS);
+        Access access = accessInSession != null ? (Access) accessInSession : Access.App;
+        return factory.getFilmDAO(access);
     }
     private void tryChangeMark(HttpServletRequest request, FilmDAO filmDAO) throws CommandException {
         String markStringValue = request.getParameter(RequestParameterName.USER_MARK);
