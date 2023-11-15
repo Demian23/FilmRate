@@ -65,7 +65,7 @@ public class SetUserMarkAndComment implements Command {
     private void changeMark(FilmDAO filmDAO, int newMark, HttpSession session) throws DAOException {
         UserMark mark = new UserMark();
         CompleteFilmInfo filmInfo = (CompleteFilmInfo)session.getAttribute(SessionAttributes.COMPLETE_FILM_INFO);
-        int userId = Integer.parseInt(session.getAttribute(SessionAttributes.USER_ID).toString());
+        int userId = CommandsComplementary.getCurrentUserId(session);
         mark.setUserId(userId);
         mark.setFilmId(filmInfo.getFilm().getFilmID());
         mark.setMark(newMark);
@@ -96,8 +96,7 @@ public class SetUserMarkAndComment implements Command {
     private void changeComment(FilmDAO filmDAO, String newComment, HttpSession session) throws DAOException {
         UserComment comment = new UserComment();
         CompleteFilmInfo filmInfo = (CompleteFilmInfo)session.getAttribute(SessionAttributes.COMPLETE_FILM_INFO);
-        int userId = Integer.parseInt(session.getAttribute(SessionAttributes.USER_ID).toString());
-        comment.setUserId(userId);
+        comment.setUserId(CommandsComplementary.getCurrentUserId(session));
         comment.setFilmId(filmInfo.getFilm().getFilmID());
         comment.setScore(0); // new comment -> score is 0
         comment.setText(newComment);

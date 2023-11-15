@@ -253,7 +253,7 @@ public class SQLFilmDAO implements FilmDAO {
         PreparedStatement preSt = con.prepareStatement(sql);
         closable.add(preSt);
         preSt.setInt(1, comment.getUserId());
-        preSt.setInt(1, comment.getFilmId());
+        preSt.setInt(2, comment.getFilmId());
 
         ResultSet rs = preSt.executeQuery();
         closable.add(rs);

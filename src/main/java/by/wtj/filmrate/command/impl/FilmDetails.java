@@ -19,23 +19,23 @@ public class FilmDetails implements Command {
 
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
-        int filmId = Integer.parseInt(request.getParameter(RequestParameterName.FILM_ID));
-        CompleteFilmInfo completeFilmInfo = new CompleteFilmInfo();
         HttpSession session = request.getSession();
-        int userId = Integer.parseInt(session.getAttribute(SessionAttributes.USER_ID).toString());
-        Object accessInSession = session.getAttribute(SessionAttributes.CURRENT_ACCESS);
-        Access access = accessInSession != null ? (Access) accessInSession : Access.App;
+        CompleteFilmInfo completeFilmInfo = new CompleteFilmInfo();
+        Access currentAccess = CommandsComplementary.getCurrentAccess(session);
 
-        Optional<Film> filmOrEmpty = tryRetrieveFilmByIdFromSession(session, filmId);
-        if(filmOrEmpty.isPresent()){
-            completeFilmInfo.setFilm(filmOrEmpty.get());
+        int filmId = Integer.parseInt(request.getParameter(RequestParameterName.FILM_ID));
+        int userId = CommandsComplementary.getCurrentUserId(session);
+
+        Optional<Film> film = tryRetrieveFilmByIdFromSession(session, filmId);
+        if(film.isPresent()){
+            completeFilmInfo.setFilm(film.get());
         }else{
             int languageId = Integer.parseInt(session.getAttribute(SessionAttributes.CURRENT_LANG_ID).toString());
-            completeFilmInfo = fillFilm(access, filmId, languageId);
+            completeFilmInfo = fillFilm(currentAccess, filmId, languageId);
         }
         fillAdditionalFilmInfo(completeFilmInfo);
-        fillUserMark(access, completeFilmInfo, userId);
-        fillUserComment(access, completeFilmInfo, userId);
+        fillUserMark(currentAccess, completeFilmInfo, userId);
+        fillUserComment(currentAccess, completeFilmInfo, userId);
         // TODO should clean this some time
         session.setAttribute(SessionAttributes.COMPLETE_FILM_INFO, completeFilmInfo);
         return JspPageName.filmPage;

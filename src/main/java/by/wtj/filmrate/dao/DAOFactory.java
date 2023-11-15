@@ -5,6 +5,7 @@ import by.wtj.filmrate.dao.connectionpool.ConnectionCredentials;
 import by.wtj.filmrate.dao.connectionpool.ConnectionPool;
 import by.wtj.filmrate.dao.connectionpool.exception.ConnectionPoolException;
 import by.wtj.filmrate.dao.exception.DAOException;
+import by.wtj.filmrate.dao.impl.SQLAdminDAO;
 import by.wtj.filmrate.dao.impl.SQLFilmDAO;
 import by.wtj.filmrate.dao.impl.SQLTranslationDAO;
 import by.wtj.filmrate.dao.impl.SQLUserDAO;
@@ -22,6 +23,8 @@ public class DAOFactory {
     private final Map<Access, UserDAO> userDAOWithDifferentAccess;
     private final Map<Access, FilmDAO> filmDAOWithDifferentAccess;
     private final Map<Access, TranslationDAO> translationDAOWithDifferentAccess;
+    @Getter
+    private final AdminDAO adminDAO;
 
     private DAOFactory(){
         userDAOWithDifferentAccess = of(
@@ -39,6 +42,7 @@ public class DAOFactory {
                 Access.User, new SQLTranslationDAO(Access.User, pool),
                 Access.Admin, new SQLTranslationDAO(Access.Admin, pool)
         );
+        adminDAO = new SQLAdminDAO(pool);
     }
 
     public static DAOFactory getInstance() throws DAOException {

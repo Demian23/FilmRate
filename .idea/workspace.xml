@@ -10,21 +10,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a6d5c0dc-adf3-41d8-abf5-6e9538e765f7" name="Changes" comment="Implement connection pool">
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/AutoClosableList.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/bean/Admin.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/bean/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/CommandsComplementary.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/AdminDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLAdminDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/SessionAttributes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/SessionAttributes.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/Authorization.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/Authorization.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/FillFilmsInUserPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/FillFilmsInUserPage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/Registration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/Registration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/FilmDetails.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/FilmDetails.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/SetUserMarkAndComment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/SetUserMarkAndComment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/DAOFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/DAOFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/ConnectionPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/ConnectionPool.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/ConnectionPoolWithSpecificAccess.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/ConnectionPoolWithSpecificAccess.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/AutoClosable.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/UserDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLFilmDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLFilmDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLTranslationDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLTranslationDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLUserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLUserDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/TextEntityDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/TextEntityDAO.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,14 +35,19 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="Jsp File" />
         <option value="Enum" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="dev" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
@@ -113,6 +119,52 @@
     </key>
   </component>
   <component name="RunManager" selected="Tomcat Server.Tomcat 9">
+    <configuration name="FilmRate" type="MavenRunConfiguration" factoryName="Maven">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="cmdOptions" />
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="war:war" />
+                <option value="org.codehaus.mojo:wagon-maven-plugin:upload-single" />
+                <option value="-Dwagon.fromFile=$PROJECT_DIR$/target/FilmRate.war" />
+                <option value="-Dwagon.url=file://$USER_HOME$/soft/Tomcat/apache-tomcat-9.0.82/webapps" />
+              </list>
+            </option>
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="projectsCmdOptionValues">
+              <list />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+    <configuration name="Debug" type="Remote">
+      <module name="FilmRate" />
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="8080" />
+      <option name="AUTO_RESTART" value="false" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="8080" />
+        <option name="LOCAL" value="false" />
+      </RunnerSettings>
+      <method v="2" />
+    </configuration>
     <configuration name="Tomcat 9" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat " ALTERNATIVE_JRE_ENABLED="true" ALTERNATIVE_JRE_PATH="21">
       <option name="UPDATING_POLICY" value="restart-server" />
       <deployment>
@@ -288,6 +340,8 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Maven.FilmRate" />
+      <item itemvalue="Remote JVM Debug.Debug" />
       <item itemvalue="Tomcat Server.Tomcat " />
       <item itemvalue="Tomcat Server.Tomcat 9" />
     </list>
@@ -443,18 +497,8 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLFilmDAO.java</url>
-          <line>209</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLUserDAO.java</url>
-          <line>15</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/DAOFactory.java</url>
-          <line>18</line>
+          <line>20</line>
           <option name="timeStamp" value="10" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -469,7 +513,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/FilmDetails.java</url>
-          <line>21</line>
+          <line>25</line>
           <option name="timeStamp" value="14" />
         </line-breakpoint>
       </breakpoints>
