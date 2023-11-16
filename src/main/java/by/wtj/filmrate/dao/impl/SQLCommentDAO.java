@@ -161,26 +161,11 @@ public class SQLCommentDAO implements CommentDAO {
             UserComment userComment = new UserComment();
             fillUserComment(rs, userComment);
             if(userComment.getCommentId() != UserComment.NO_COMMENT_ID) {
-                userComment.setUserName(retrieveUserName(userComment.getUserId(), con, autoClosable));
+                userComment.setUserName(SQLCommonDAO.retrieveUserName(userComment.getUserId(), con, autoClosable));
                 result.add(userComment);
             }
         }
         return result;
     }
 
-    private String retrieveUserName(int userId, Connection con, AutoClosableList list) throws SQLException, DAOException {
-        String sql = "SELECT `name` FROM `user` WHERE `user_id` = ?;";
-
-        PreparedStatement preSt = con.prepareStatement(sql);
-        list.add(preSt);
-        preSt.setInt(1, userId);
-
-        ResultSet rs = preSt.executeQuery();
-        list.add(rs);
-        if(rs.next()){
-            return rs.getString("name");
-        }else{
-            throw new DAOException("No such user with id: " + userId);
-        }
-    }
 }

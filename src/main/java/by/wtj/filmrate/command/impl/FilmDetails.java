@@ -74,7 +74,7 @@ public class FilmDetails implements Command {
         mark.setFilmId(completeFilmInfo.getFilm().getFilmID());
         mark.setUserId(userId);
         try{
-            DAOFactory.getInstance().getFilmDAO(access).getUserMarkToFilm(mark);
+            DAOFactory.getInstance().getMarkDAO().getUserMarkToFilm(mark);
         }catch(DAOException e){
             throw new CommandException(e);
         }

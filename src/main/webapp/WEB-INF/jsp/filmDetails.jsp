@@ -31,5 +31,6 @@
 </form>
 <!--TODO show other comments and marks (if user want)-->
 <%@include file="comments.jsp"%>
+<%@include file="marks.jsp"%>
 </body>
 </html>

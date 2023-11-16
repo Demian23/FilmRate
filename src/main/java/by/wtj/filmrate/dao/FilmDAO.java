@@ -8,7 +8,5 @@ import java.util.List;
 public interface FilmDAO {
     List<Film> getAllFilms() throws DAOException;
     CompleteFilmInfo getFilm(int filmId)throws DAOException;
-    void setUserMarkToFilm(Film film, UserMark mark) throws DAOException;
-    void getUserMarkToFilm(UserMark mark) throws DAOException;
     void updateFilm(CompleteFilmInfo filmInfo);
 }

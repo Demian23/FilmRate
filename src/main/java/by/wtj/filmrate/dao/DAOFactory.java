@@ -24,6 +24,8 @@ public class DAOFactory {
     private final AdminDAO adminDAO;
     @Getter
     private final CommentDAO commentDAO;
+    @Getter
+    private final MarkDAO markDAO;
 
     private DAOFactory(){
         userDAOWithDifferentAccess = of(
@@ -43,6 +45,7 @@ public class DAOFactory {
         );
         adminDAO = new SQLAdminDAO(pool);
         commentDAO = new SQLCommentDAO(pool);
+        markDAO = new SQLMarkDAO(pool);
     }
 
     public static DAOFactory getInstance() throws DAOException {

@@ -5,6 +5,7 @@ import by.wtj.filmrate.bean.CompleteFilmInfo;
 import by.wtj.filmrate.bean.UserComment;
 import by.wtj.filmrate.bean.UserMark;
 import by.wtj.filmrate.command.Command;
+import by.wtj.filmrate.command.CommandExecutor;
 import by.wtj.filmrate.command.SessionAttributes;
 import by.wtj.filmrate.command.exception.CommandException;
 import by.wtj.filmrate.controller.JspPageName;
@@ -12,6 +13,7 @@ import by.wtj.filmrate.controller.RequestParameterName;
 import by.wtj.filmrate.dao.CommentDAO;
 import by.wtj.filmrate.dao.DAOFactory;
 import by.wtj.filmrate.dao.FilmDAO;
+import by.wtj.filmrate.dao.MarkDAO;
 import by.wtj.filmrate.dao.exception.DAOException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,34 +26,21 @@ public class SetUserMarkAndComment implements Command {
     }
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
-        Access access = CommandsComplementary.getCurrentAccess(request.getSession());
-        FilmDAO filmDAO = CommandsComplementary.getFilmDAOForAccess(access);
         CommentDAO commentDAO = CommandsComplementary.getCommentDAO();
-        tryChangeMark(request, filmDAO);
+        MarkDAO markDAO = CommandsComplementary.getFactory().getMarkDAO();
+        tryChangeMark(request, markDAO);
         tryChangeComment(request, commentDAO);
         return JspPageName.filmPage;
     }
 
-    FilmDAO getFilmDAO(HttpServletRequest request) throws CommandException {
-        DAOFactory factory;
-        try{
-            factory = DAOFactory.getInstance();
-        }catch (DAOException e){
-            throw new CommandException(e);
-        }
-        HttpSession session = request.getSession();
-        Object accessInSession = session.getAttribute(SessionAttributes.CURRENT_ACCESS);
-        Access access = accessInSession != null ? (Access) accessInSession : Access.App;
-        return factory.getFilmDAO(access);
-    }
-    private void tryChangeMark(HttpServletRequest request, FilmDAO filmDAO) throws CommandException {
+    private void tryChangeMark(HttpServletRequest request, MarkDAO markDAO) throws CommandException {
         String markStringValue = request.getParameter(RequestParameterName.USER_MARK);
         if(!markStringValue.isEmpty()){
             int newMark = Integer.parseInt(markStringValue);
             HttpSession session = request.getSession();
             if(isMarkChanged(newMark, session)){
                 try {
-                    changeMark(filmDAO, newMark, session);
+                    changeMark(markDAO, newMark, session);
                 }catch (DAOException e){
                     throw new CommandException(e);
                 }
@@ -65,14 +54,14 @@ public class SetUserMarkAndComment implements Command {
         return oldMark != newMark;
     }
 
-    private void changeMark(FilmDAO filmDAO, int newMark, HttpSession session) throws DAOException {
+    private void changeMark(MarkDAO markDAO, int newMark, HttpSession session) throws DAOException {
         UserMark mark = new UserMark();
         CompleteFilmInfo filmInfo = (CompleteFilmInfo)session.getAttribute(SessionAttributes.COMPLETE_FILM_INFO);
         int userId = CommandsComplementary.getCurrentUserId(session);
         mark.setUserId(userId);
         mark.setFilmId(filmInfo.getFilm().getFilmID());
         mark.setMark(newMark);
-        filmDAO.setUserMarkToFilm(filmInfo.getFilm(), mark);
+        markDAO.setUserMarkToFilm(filmInfo.getFilm(), mark);
         filmInfo.setMark(mark);
         session.setAttribute(SessionAttributes.COMPLETE_FILM_INFO, filmInfo);
     }

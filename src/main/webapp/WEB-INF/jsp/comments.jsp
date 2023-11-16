@@ -14,6 +14,6 @@
         </ul>
     </c:forEach>
 </c:if>
-<c:if test="${isCommentsInSession == null}">
+<c:if test="${sessionScope.get(\"commentsToCurrentFilm\") == null}">
     <button><a href="controller?command=AddCommentsToCurrentFilmInSession&film_id=${sessionScope.get("filmInfo").film.filmID}">Show comments</a></button>
 </c:if>

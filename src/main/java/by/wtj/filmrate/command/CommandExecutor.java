@@ -21,6 +21,7 @@ public final class CommandExecutor {
         commandNameToCommand.put(CommandName.ChangeLanguage, new ChangeLanguage());
         commandNameToCommand.put(CommandName.SetUserMarkAndComment, new SetUserMarkAndComment());
         commandNameToCommand.put(CommandName.AddCommentsToCurrentFilmInSession, new AddCommentsToCurrenFilmInSession());
+        commandNameToCommand.put(CommandName.AddMarksToCurrentFilmInSession, new AddMarksToCurrentFilmInSession());
     }
 
     public Command getCommand(String commandName){
