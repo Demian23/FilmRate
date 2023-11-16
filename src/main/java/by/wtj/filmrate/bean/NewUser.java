@@ -4,6 +4,9 @@ import java.util.Objects;
 
 public class NewUser{
     public NewUser(){}
+    public NewUser(String name, String password, String newMail){
+        userName = name; newPassword = password; mail = newMail;
+    }
     private String userName;
     private String newPassword;
     private String mail;

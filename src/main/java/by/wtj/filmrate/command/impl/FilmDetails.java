@@ -85,7 +85,7 @@ public class FilmDetails implements Command {
         comment.setFilmId(completeFilmInfo.getFilm().getFilmID());
         comment.setUserId(userId);
         try{
-            DAOFactory.getInstance().getFilmDAO(access).getUserCommentToFilm(comment);
+            DAOFactory.getInstance().getCommentDAO().getUserCommentToFilm(comment);
         }catch(DAOException e){
             throw new CommandException(e);
         }

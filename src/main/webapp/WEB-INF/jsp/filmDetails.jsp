@@ -8,6 +8,7 @@
 <head>
     <title>${sessionScope.get("filmInfo").film.localisedText}</title>
 </head>
+<%@include file="header.jsp"%>
 <body>
 <h1>${sessionScope.get("filmInfo").film.localisedText.localisedText}</h1>
 <h2>${sessionScope.get("filmInfo").film.text.textEntity}</h2>
@@ -29,5 +30,6 @@
     <button type="submit">Submit</button>
 </form>
 <!--TODO show other comments and marks (if user want)-->
+<%@include file="comments.jsp"%>
 </body>
 </html>

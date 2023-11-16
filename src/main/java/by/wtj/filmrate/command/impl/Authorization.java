@@ -21,7 +21,7 @@ public class Authorization implements Command {
     public boolean isRedirect(){return true;}
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
-        UserDAO userDAO = getUserDAO();
+        UserDAO userDAO = CommandsComplementary.getUserDAOForAccess(Access.App);
         UserCredentials credentials = setUserCredentials(request);
         if(isValidUserCredentials(credentials)){
             HttpSession session = request.getSession();
@@ -33,15 +33,6 @@ public class Authorization implements Command {
             throw new CommandException("Invalid credentials.");
     }
 
-    private UserDAO getUserDAO() throws CommandException {
-        DAOFactory factory;
-        try{
-            factory = DAOFactory.getInstance();
-        }catch (DAOException e){
-            throw new CommandException(e);
-        }
-        return factory.getUserDAO(Access.App);
-    }
 
     private UserCredentials setUserCredentials(HttpServletRequest request){
         UserCredentials userCredentials = new UserCredentials();

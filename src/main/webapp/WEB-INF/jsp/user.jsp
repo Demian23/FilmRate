@@ -4,21 +4,8 @@
 <head>
     <title>FilmRate</title>
 </head>
+<%@include file="header.jsp"%>
 <body>
-    <form action="${pageContext.request.contextPath}/controller" method="post">
-        <input type="hidden" name="command" value="ChangeLanguage">
-        <label>
-            Language
-            <select name="language">
-                <c:forEach items="${sessionScope.get(\"languages\")}" var="lang">
-                    <option value="${lang.id}"
-                            <c:if test="${lang.id == sessionScope.get(\"currentLangID\")}">selected</c:if>>
-                            ${lang.name}</option>
-                </c:forEach>
-            </select>
-        </label>
-        <button type="submit">Change</button>
-    </form>
     <table>
         <c:forEach items="${sessionScope.get(\"films\")}" var="film">
             <tr style="border: 1px solid black">

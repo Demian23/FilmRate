@@ -16,24 +16,23 @@ public class Registration implements Command {
     public boolean isRedirect(){return true;}
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
-        /*
-        NewUser newUser = new NewUser();
-        newUser.setMail(request.getParameter(RequestParameterName.USER_MAIL));
-        newUser.setUserName(request.getParameter(RequestParameterName.USER_NAME));
-        newUser.setNewPassword(request.getParameter(RequestParameterName.USER_PASSWORD));
-        if(isValidUserData(newUser)){
-            UserDAO userDAO = DAOFactory.getInstance().getUserDAO(Access.App);
+        NewUser newUser = fillNewUser(request);
+        UserDAO userDAO = CommandsComplementary.getUserDAOForAccess(Access.App);
             try{
                 userDAO.registration(newUser);
             } catch (DAOException ex){
                 throw new CommandException(ex);
             }
-        }else{
-            throw new CommandException("Wrong user data");
-        }
-
-         */
         return JspPageName.authorizationPage;
+    }
+
+    private NewUser fillNewUser(HttpServletRequest request) throws CommandException {
+        NewUser newUser = new NewUser(request.getParameter(RequestParameterName.USER_NAME),
+                request.getParameter(RequestParameterName.USER_PASSWORD), request.getParameter(RequestParameterName.USER_MAIL));
+        if(isValidUserData(newUser))
+            return newUser;
+        else
+            throw new CommandException("Wrong data");
     }
 
     private boolean isValidUserData(NewUser newUser){

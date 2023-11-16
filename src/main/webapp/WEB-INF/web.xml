@@ -15,4 +15,37 @@
         <servlet-name>Controller</servlet-name>
         <url-pattern>/controller</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Authorization</servlet-name>
+        <jsp-file>/WEB-INF/jsp/authorization.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Authorization</servlet-name>
+        <url-pattern>/authorization</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>Registration</servlet-name>
+        <jsp-file>/WEB-INF/jsp/registration.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Registration</servlet-name>
+        <url-pattern>/registration</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>UserPage</servlet-name>
+        <jsp-file>/WEB-INF/jsp/user.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserPage</servlet-name>
+        <url-pattern>/userPage</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>FilmDetails</servlet-name>
+        <jsp-file>/WEB-INF/jsp/filmDetails.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FilmDetails</servlet-name>
+        <url-pattern>/filmDetails</url-pattern>
+    </servlet-mapping>
 </web-app>

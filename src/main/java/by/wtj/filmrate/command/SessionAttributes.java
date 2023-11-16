@@ -7,4 +7,5 @@ public class SessionAttributes {
     public static final String LANGUAGES= "languages";
     // if this key is empty, default value -> App
     public static final String CURRENT_ACCESS = "currentAccess";
+    public static final String COMMENTS_TO_CURRENT_FILM = "commentsToCurrentFilm";
 }

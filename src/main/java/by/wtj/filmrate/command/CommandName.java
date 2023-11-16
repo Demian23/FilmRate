@@ -1,5 +1,6 @@
 package by.wtj.filmrate.command;
 
 public enum CommandName {
-    Registration, NoSuchCommand, Authorization, FillFilmsInUserPage, FilmDetails, ChangeLanguage, SetUserMarkAndComment
+    Registration, NoSuchCommand, Authorization, FillFilmsInUserPage, FilmDetails, ChangeLanguage, SetUserMarkAndComment,
+    LogOut, AddCommentsToCurrentFilmInSession
 }

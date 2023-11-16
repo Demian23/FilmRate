@@ -9,6 +9,7 @@ import by.wtj.filmrate.command.SessionAttributes;
 import by.wtj.filmrate.command.exception.CommandException;
 import by.wtj.filmrate.controller.JspPageName;
 import by.wtj.filmrate.controller.RequestParameterName;
+import by.wtj.filmrate.dao.CommentDAO;
 import by.wtj.filmrate.dao.DAOFactory;
 import by.wtj.filmrate.dao.FilmDAO;
 import by.wtj.filmrate.dao.exception.DAOException;
@@ -23,9 +24,11 @@ public class SetUserMarkAndComment implements Command {
     }
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
-        FilmDAO filmDAO = getFilmDAO(request);
+        Access access = CommandsComplementary.getCurrentAccess(request.getSession());
+        FilmDAO filmDAO = CommandsComplementary.getFilmDAOForAccess(access);
+        CommentDAO commentDAO = CommandsComplementary.getCommentDAO();
         tryChangeMark(request, filmDAO);
-        tryChangeComment(request, filmDAO);
+        tryChangeComment(request, commentDAO);
         return JspPageName.filmPage;
     }
 
@@ -74,13 +77,13 @@ public class SetUserMarkAndComment implements Command {
         session.setAttribute(SessionAttributes.COMPLETE_FILM_INFO, filmInfo);
     }
 
-    private void tryChangeComment(HttpServletRequest request, FilmDAO filmDAO) throws CommandException {
+    private void tryChangeComment(HttpServletRequest request, CommentDAO commentDAO) throws CommandException {
         String newComment = request.getParameter(RequestParameterName.USER_COMMENT);
         HttpSession session = request.getSession();
         if(!newComment.isEmpty()){
             if(isCommentChanged(newComment, session)){
                 try {
-                    changeComment(filmDAO, newComment, session);
+                    changeComment(commentDAO, newComment, session);
                 }catch (DAOException e){
                     throw new CommandException(e);
                 }
@@ -93,7 +96,7 @@ public class SetUserMarkAndComment implements Command {
         return oldComment == null || !oldComment.equals(newComment);
     }
 
-    private void changeComment(FilmDAO filmDAO, String newComment, HttpSession session) throws DAOException {
+    private void changeComment(CommentDAO commentDAO, String newComment, HttpSession session) throws DAOException {
         UserComment comment = new UserComment();
         CompleteFilmInfo filmInfo = (CompleteFilmInfo)session.getAttribute(SessionAttributes.COMPLETE_FILM_INFO);
         comment.setUserId(CommandsComplementary.getCurrentUserId(session));
@@ -101,7 +104,7 @@ public class SetUserMarkAndComment implements Command {
         comment.setScore(0); // new comment -> score is 0
         comment.setText(newComment);
         comment.setCommentId(filmInfo.getComment().getCommentId());
-        filmDAO.setUserCommentToFilm(comment);
+        commentDAO.setUserCommentToFilm(comment);
         filmInfo.setComment(comment);
         session.setAttribute(SessionAttributes.COMPLETE_FILM_INFO, filmInfo);
     }

@@ -13,12 +13,14 @@ public final class CommandExecutor {
 
     private CommandExecutor(){
         commandNameToCommand.put(CommandName.Registration, new Registration());
+        commandNameToCommand.put(CommandName.LogOut, new LogOut());
         commandNameToCommand.put(CommandName.NoSuchCommand, new NoSuchCommand());
         commandNameToCommand.put(CommandName.Authorization, new Authorization());
         commandNameToCommand.put(CommandName.FillFilmsInUserPage, new FillFilmsInUserPage());
         commandNameToCommand.put(CommandName.FilmDetails, new FilmDetails());
         commandNameToCommand.put(CommandName.ChangeLanguage, new ChangeLanguage());
         commandNameToCommand.put(CommandName.SetUserMarkAndComment, new SetUserMarkAndComment());
+        commandNameToCommand.put(CommandName.AddCommentsToCurrentFilmInSession, new AddCommentsToCurrenFilmInSession());
     }
 
     public Command getCommand(String commandName){
