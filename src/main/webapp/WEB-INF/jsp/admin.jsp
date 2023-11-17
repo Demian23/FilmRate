@@ -6,6 +6,7 @@
 </head>
 <header>
     <%@include file="header.jsp"%>
+    <%@include file="admin_header.jsp"%>
 </header>
 <body>
 </body>

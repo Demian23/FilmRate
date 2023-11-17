@@ -8,7 +8,9 @@
 <head>
     <title>${sessionScope.get("filmInfo").film.localisedText}</title>
 </head>
-<%@include file="header.jsp"%>
+<header>
+    <%@include file="header.jsp"%>
+</header>
 <body>
 <h1>${sessionScope.get("filmInfo").film.localisedText.localisedText}</h1>
 <h2>${sessionScope.get("filmInfo").film.text.textEntity}</h2>

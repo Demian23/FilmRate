@@ -6,5 +6,6 @@ import lombok.Data;
 public class User {
     int userId;
     int userRate;
-    public User(int id, int rate){userId = id; userRate = rate;}
+    String name;
+    public User(int id, int rate, String uName){userId = id; userRate = rate; name = uName;}
 }
