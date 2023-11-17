@@ -161,7 +161,7 @@ public class SQLCommentDAO implements CommentDAO {
             UserComment userComment = new UserComment();
             fillUserComment(rs, userComment);
             if(userComment.getCommentId() != UserComment.NO_COMMENT_ID) {
-                userComment.setUserName(SQLCommonDAO.retrieveUserName(userComment.getUserId(), con, autoClosable));
+                userComment.setUserName(CommonSqlRequests.retrieveUserName(userComment.getUserId(), con, autoClosable));
                 result.add(userComment);
             }
         }

@@ -1,6 +1,7 @@
 package by.wtj.filmrate.dao.impl;
 
 import by.wtj.filmrate.bean.*;
+import by.wtj.filmrate.command.Command;
 import by.wtj.filmrate.dao.FilmDAO;
 import by.wtj.filmrate.dao.connectionpool.ConnectionPool;
 import by.wtj.filmrate.dao.connectionpool.exception.ConnectionPoolException;
@@ -45,7 +46,7 @@ public class SQLFilmDAO implements FilmDAO {
 
         while (rs.next()) {
             Film film = createFilm(rs);
-            film.setText(TextEntityDAO.getTextEntity(con, autoClosable, rs.getInt("text_entity_id")));
+            film.setText(CommonSqlRequests.getTextEntity(con, autoClosable, rs.getInt("text_entity_id")));
             resultList.add(film);
         }
         return resultList;
@@ -89,7 +90,7 @@ public class SQLFilmDAO implements FilmDAO {
             CompleteFilmInfo completeFilmInfo = new CompleteFilmInfo();
             completeFilmInfo.setFilm(createFilm(rs));
             completeFilmInfo.getFilm().setText(
-                    TextEntityDAO.getTextEntity(con, closable, rs.getInt("text_entity_id")));
+                    CommonSqlRequests.getTextEntity(con, closable, rs.getInt("text_entity_id")));
             getFilmDetails(completeFilmInfo, rs);
             return completeFilmInfo;
         } else

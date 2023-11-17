@@ -1,8 +1,6 @@
 package by.wtj.filmrate.dao.impl;
 
 import by.wtj.filmrate.bean.*;
-import by.wtj.filmrate.dao.DAOFactory;
-import by.wtj.filmrate.dao.TranslationDAO;
 import by.wtj.filmrate.dao.UserDAO;
 import by.wtj.filmrate.dao.connectionpool.ConnectionPool;
 import by.wtj.filmrate.dao.connectionpool.exception.ConnectionPoolException;
@@ -106,9 +104,8 @@ public class SQLUserDAO implements UserDAO {
         }
     }
 
-
     @Override
-    public Optional<User> getUser(UserCredentials credentials) throws DAOException {
+    public Optional<UserWithBan> getUser(UserCredentials credentials) throws DAOException {
         try (AutoClosableList autoClosable = new AutoClosableList()){
             return queryUser(credentials, autoClosable);
         }catch (SQLException | ConnectionPoolException | IOException exception){
@@ -117,11 +114,11 @@ public class SQLUserDAO implements UserDAO {
     }
 
 
-    private Optional<User> queryUser(UserCredentials credentials, AutoClosableList closableList) throws ConnectionPoolException, SQLException {
+    private Optional<UserWithBan> queryUser(UserCredentials credentials, AutoClosableList closableList) throws ConnectionPoolException, SQLException, DAOException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
         closableList.add(con);
 
-        String sql = "SELECT `user_id`, `user_rate` FROM `user` WHERE `name` = ? AND `password_hash` = ?;";
+        String sql = "SELECT * FROM `user` WHERE `name` = ? AND `password_hash` = ?;";
         PreparedStatement preSt = con.prepareStatement(sql);
         closableList.add( preSt);
 
@@ -129,17 +126,50 @@ public class SQLUserDAO implements UserDAO {
         preSt.setString(2, credentials.getPasswordHash());
 
         ResultSet rs = preSt.executeQuery();
-        closableList.add( rs);
+        closableList.add(rs);
 
         if (rs.next()) {
-             return Optional.of(new User(rs.getInt("user_id"), rs.getInt("user_rate"),
-                     rs.getString("name")));
+            User newUser = new User(rs.getInt("user_id"), rs.getInt("user_rate"),
+                rs.getString("name"));
+            UserWithBan user = new UserWithBan();
+            user.setUser(newUser);
+            Optional<BannedUser> bannedUser = retrieveBannedUserById(newUser.getUserId(), con, closableList);
+            user.setBanned(bannedUser.isPresent());
+            bannedUser.ifPresent(user::setBannedInfo);
+            return Optional.of(user);
         } else {
             return Optional.empty();
         }
     }
+
+    private Optional<BannedUser> retrieveBannedUserById(int id, Connection con, AutoClosableList list) throws SQLException, DAOException {
+        String sql = "SELECT * FROM `banned_user` WHERE `banned_user_id` = ?;";
+        PreparedStatement preSt = con.prepareStatement(sql);
+        list.add( preSt);
+
+        preSt.setInt(1, id);
+
+        ResultSet rs = preSt.executeQuery();
+        list.add(rs);
+        if(rs.next()){
+            return Optional.of(fillBannedUser(rs, con, list));
+        }else{
+            return Optional.empty();
+        }
+    }
+
+    private BannedUser fillBannedUser(ResultSet rs, Connection con, AutoClosableList list) throws SQLException, DAOException {
+        BannedUser bannedUser = new BannedUser();
+        bannedUser.setAdminBannedId(rs.getInt("admin_banned"));
+        bannedUser.setUserId(rs.getInt("banned_user_id"));
+        bannedUser.setStartPeriod(rs.getString("start"));
+        bannedUser.setEndPeriod(rs.getString("end"));
+        bannedUser.setAdminBannedName(CommonSqlRequests.getAdminName(bannedUser.getAdminBannedId(), con, list));
+        return bannedUser;
+    }
+
     @Override
-    public List<User> getAllUsers() throws DAOException {
+    public List<UserWithBan> getAllUsers()throws DAOException{
         try (AutoClosableList autoClosable = new AutoClosableList()){
             return queryAllUsers(autoClosable);
         }catch (SQLException | ConnectionPoolException | IOException exception){
@@ -147,98 +177,57 @@ public class SQLUserDAO implements UserDAO {
         }
     }
 
-
-    private List<User> queryAllUsers(AutoClosableList autoClosable) throws DAOException, SQLException, ConnectionPoolException {
+    private List<UserWithBan> queryAllUsers(AutoClosableList list) throws ConnectionPoolException, SQLException, DAOException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
-        autoClosable.add(con);
-
-        Statement st = con.createStatement();
-        autoClosable.add(st);
-
-        String sql = "SELECT * FROM `user`";
-        ResultSet rs = st.executeQuery(sql);
-        autoClosable.add(rs);
-
-        ArrayList<User> resultList = new ArrayList<>();
-
-        while (rs.next()) {
-            resultList.add(new User(rs.getInt("user_id"),
-                rs.getInt("user_rate"), rs.getString("name")));
-        }
-        return resultList;
-    }
-
-    @Override
-    public Map<Integer, UserInfoAggregation> getAllUsersAggregationInfo() throws DAOException {
-        List<User> users = getAllUsers();
-        Map<Integer, UserInfoAggregation> fullUsersInfo = fillFullUserInfo(users);
-        fillAllBannedUsers(fullUsersInfo);
-        return fullUsersInfo;
-    }
-
-    private void fillAllBannedUsers(Map<Integer, UserInfoAggregation> fullUsersInfo) throws DAOException {
-        List<BannedUser> allBannedUsers = getAllBannedUsers();
-        for(BannedUser bannedUser : allBannedUsers){
-            UserInfoAggregation fullInfo =  fullUsersInfo.get(bannedUser.getUserId());
-            if(fullInfo != null){
-                fullInfo.setBanned(true);
-                fullInfo.setStartBanPeriod(bannedUser.getStartPeriod());
-                fullInfo.setEndBanPeriod(bannedUser.getEndPeriod());
-                fullInfo.setAdminBannedId(bannedUser.getAdminBannedId());
-                fullInfo.setAdminBannedName(SQLCommonDAO.getAdminName());
-            }
-        }
-    }
-
-
-    private List<BannedUser> getAllBannedUsers() throws DAOException {
-        try (AutoClosableList autoClosable = new AutoClosableList()){
-            return queryAllBannedUsers(autoClosable);
-        }catch (SQLException | ConnectionPoolException | IOException exception){
-            throw new DAOException(exception);
-        }
-    }
-
-    private List<BannedUser> queryAllBannedUsers(AutoClosableList autoClosable) throws ConnectionPoolException, SQLException {
-        Connection con = pool.takeConnectionWithAccess(accessToDataBase);
-        autoClosable.add(con);
-
-        Statement st = con.createStatement();
-        autoClosable.add(st);
-
-        String sql = "SELECT * FROM `banned_user`";
-        ResultSet rs = st.executeQuery(sql);
-        autoClosable.add(rs);
-
-        ArrayList<BannedUser> resultList = new ArrayList<>();
-
-        while (rs.next()) {
-            resultList.add(createBannedUser(rs));
-        }
-        return resultList;
-    }
-
-    private BannedUser createBannedUser(ResultSet rs) throws SQLException {
-        BannedUser bannedUser = new BannedUser();
-        bannedUser.setAdminBannedId(rs.getInt("admin_banned"));
-        bannedUser.setUserId(rs.getInt("banned_user_id"));
-        Timestamp start = rs.getTimestamp("start");
-        bannedUser.setStartPeriod(start.toString());
-        Timestamp end = rs.getTimestamp("end");
-        bannedUser.setEndPeriod(end.toString());
-        return bannedUser;
-    }
-
-
-    private Map<Integer, UserInfoAggregation> fillFullUserInfo(List<User> users) {
-        Map<Integer, UserInfoAggregation> result = new HashMap<>();
+        list.add(con);
+        List<UserWithBan> result = new ArrayList<>();
+        List<User> users = queryUsers(con, list);
+        Map<Integer, BannedUser> bannedUsers = queryBannedUsers(con, list);
         for(User user : users){
-            UserInfoAggregation fullInfo = new UserInfoAggregation();
-            fullInfo.setUser(user);
-            result.put(fullInfo.getUser().getUserId(), fullInfo);
+            BannedUser bannedUser = bannedUsers.get(user.getUserId());
+            UserWithBan userWithBan = new UserWithBan();
+            userWithBan.setUser(user);
+            if(bannedUser != null){
+                userWithBan.setBanned(true);
+                userWithBan.setBannedInfo(bannedUser);
+            }else{
+                userWithBan.setBanned(false);
+            }
+            result.add(userWithBan);
         }
         return result;
     }
 
+    private List<User> queryUsers(Connection con, AutoClosableList list) throws SQLException {
+        Statement st = con.createStatement();
+        list.add(st);
 
+        String sql = "SELECT * FROM `user`";
+        ResultSet rs = st.executeQuery(sql);
+        list.add(rs);
+
+        List<User> result = new ArrayList<>();
+        while(rs.next()){
+            result.add(new User(rs.getInt("user_id"),
+                    rs.getInt("user_rate"), rs.getString("name")));
+        }
+        return result;
+    }
+
+    private Map<Integer, BannedUser> queryBannedUsers(Connection con, AutoClosableList list) throws SQLException, DAOException {
+        Statement st = con.createStatement();
+        list.add(st);
+
+        String sql = "SELECT * FROM `banned_user`";
+        ResultSet rs = st.executeQuery(sql);
+        list.add(rs);
+
+        Map<Integer, BannedUser> result = new HashMap<>();
+
+        while (rs.next()) {
+            BannedUser bannedUser = fillBannedUser(rs, con, list);
+            result.put(bannedUser.getUserId(), bannedUser);
+        }
+        return result;
+    }
 }

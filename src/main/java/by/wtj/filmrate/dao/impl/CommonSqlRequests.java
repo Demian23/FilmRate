@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SQLCommonDAO {
+public class CommonSqlRequests {
     static public String retrieveUserName(int userId, Connection con, AutoClosableList list) throws SQLException, DAOException {
         String sql = "SELECT `name` FROM `user` WHERE `user_id` = ?;";
 
@@ -43,19 +43,32 @@ public class SQLCommonDAO {
         return entity;
     }
 
-    static public String getAdminName(Connection con, AutoClosableList closableList, int adminId) throws SQLException {
+    static public String getAdminName(int adminId, Connection con, AutoClosableList closableList) throws SQLException, DAOException {
         String sql = "SELECT `user_id` FROM `admin` WHERE `admin_id` = ?;";
         PreparedStatement preSt = con.prepareStatement(sql);
         closableList.add( preSt);
         preSt.setInt(1, adminId);
         ResultSet rs = preSt.executeQuery();
         closableList.add(rs);
-        sql = "SELECT `name` FROM `user` WHERE `user_id` = ?;";
-        preSt = con.prepareStatement(sql);
-        closableList.add(preSt);
-        preSt.setInt(1, rs.getInt("user_id"));
-        rs = preSt.executeQuery();
-        closableList.add(rs);
-        return rs.getString("name");
+        if(rs.next()) {
+            int userId = rs.getInt("user_id");
+            return getUserNameById(userId, con, closableList);
+        }else{
+            throw new DAOException("No such admin with id: " + adminId);
+        }
+    }
+    static public String getUserNameById(int userId, Connection con, AutoClosableList list) throws SQLException, DAOException {
+        String sql = "SELECT `name` FROM `user` WHERE `user_id` = ?;";
+        PreparedStatement preSt = con.prepareStatement(sql);
+        list.add(preSt);
+        preSt.setInt(1, userId);
+        ResultSet rs = preSt.executeQuery();
+        list.add(rs);
+        if(rs.next())
+            return rs.getString("name");
+        else{
+            throw new DAOException("No such name for user_id: " + userId);
+        }
+
     }
 }

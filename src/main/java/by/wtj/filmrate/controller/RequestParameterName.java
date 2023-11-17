@@ -11,4 +11,5 @@ public class RequestParameterName {
     public static final String FILMS = "films";
     public static final String ERROR_MSG = "errorMsg";
     public static final String LANGUAGE = "language";
+    public static final String BANNED = "banned";
 }

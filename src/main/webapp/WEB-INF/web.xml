@@ -48,4 +48,12 @@
         <servlet-name>FilmDetails</servlet-name>
         <url-pattern>/filmDetails</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>BannedUserPage</servlet-name>
+        <jsp-file>/WEB-INF/jsp/banned_user_page.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BannedUserPage</servlet-name>
+        <url-pattern>/bannedUserPage</url-pattern>
+    </servlet-mapping>
 </web-app>

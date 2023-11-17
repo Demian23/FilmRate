@@ -17,22 +17,29 @@ import java.util.List;
 import java.util.Optional;
 
 public class Authorization implements Command {
+    boolean redirect;
     @Override
-    public boolean isRedirect(){return true;}
+    public boolean isRedirect(){return redirect;}
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
-        UserDAO userDAO = CommandsComplementary.getUserDAOForAccess(Access.App);
         UserCredentials credentials = setUserCredentials(request);
         if(isValidUserCredentials(credentials)){
             HttpSession session = request.getSession();
-            retrieveUserFromDAOAndSaveInSession(userDAO, credentials, session);
-            trySetAllLanguagesInSession(session);
-            session.setAttribute(RequestParameterName.commandName, CommandName.FillFilmsInUserPage.name());
-            return JspPageName.controller;
+            UserWithBan user = retrieveUser(credentials);
+            if(!user.isBanned()){
+                redirect = true;
+                trySetAllLanguagesInSession(session);
+                setUserAccessInSession(user.getUser(), session);
+                session.setAttribute(RequestParameterName.commandName, CommandName.FillFilmsInUserPage.name());
+                return JspPageName.controller;
+            }else{
+                redirect = false;
+                request.setAttribute(RequestParameterName.BANNED, user.getBannedInfo());
+                return JspPageName.bannedUserPage;
+            }
         }else
             throw new CommandException("Invalid credentials.");
     }
-
 
     private UserCredentials setUserCredentials(HttpServletRequest request){
         UserCredentials userCredentials = new UserCredentials();
@@ -40,47 +47,37 @@ public class Authorization implements Command {
         userCredentials.setPasswordHash(request.getParameter(RequestParameterName.USER_PASSWORD));
         return userCredentials;
     }
-    private void retrieveUserFromDAOAndSaveInSession(UserDAO userDAO, UserCredentials credentials,
-       HttpSession session) throws CommandException {
-        Optional<User> user;
+
+    private void setUserAccessInSession(User user, HttpSession session) throws CommandException {
+        Optional<Admin> admin;
+        try{
+            admin = CommandsComplementary.getFactory().getAdminDAO().getAdmin(user);
+        } catch (DAOException ex){
+            throw new CommandException(ex);
+        }
+        if(admin.isPresent()){
+            session.setAttribute(SessionAttributes.CURRENT_ACCESS, Access.Admin);
+            session.setAttribute(SessionAttributes.CURRENT_USER, admin.get());
+        }else{
+            session.setAttribute(SessionAttributes.CURRENT_ACCESS, Access.User);
+            session.setAttribute(SessionAttributes.CURRENT_USER, user);
+        }
+    }
+
+    private UserWithBan retrieveUser(UserCredentials credentials) throws CommandException {
+        UserDAO userDAO = CommandsComplementary.getUserDAOForAccess(Access.App);
+        Optional<UserWithBan> user;
         try{
             user = userDAO.getUser(credentials);
         } catch (DAOException ex){
             throw new CommandException(ex);
         }
         if(user.isPresent()) {
-            Optional<Admin> admin;
-            try{
-                admin = retrieveAdminByUser(user.get());
-            } catch (DAOException ex){
-                throw new CommandException(ex);
-            }
-            if(admin.isPresent()){
-                session.setAttribute(SessionAttributes.CURRENT_ACCESS, Access.Admin);
-                session.setAttribute(SessionAttributes.CURRENT_USER, admin.get());
-            }else{
-                session.setAttribute(SessionAttributes.CURRENT_ACCESS, Access.User);
-                session.setAttribute(SessionAttributes.CURRENT_USER, user.get());
-            }
+            return user.get();
         } else{
             throw new CommandException("No such user");
         }
     }
-
-    private Optional<Admin> retrieveAdminByUser(User user) throws CommandException, DAOException {
-        AdminDAO adminDAO  = getAdminDAO();
-        return adminDAO.getAdmin(user);
-    }
-    private AdminDAO getAdminDAO() throws CommandException {
-        DAOFactory factory;
-        try{
-            factory = DAOFactory.getInstance();
-        }catch (DAOException e){
-            throw new CommandException(e);
-        }
-        return factory.getAdminDAO();
-    }
-
 
     private void trySetAllLanguagesInSession(HttpSession session) throws CommandException {
         Object languages = session.getAttribute(SessionAttributes.LANGUAGES);

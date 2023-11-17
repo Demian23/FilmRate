@@ -2,7 +2,6 @@ package by.wtj.filmrate.dao.impl;
 
 import by.wtj.filmrate.bean.Access;
 import by.wtj.filmrate.bean.Film;
-import by.wtj.filmrate.bean.UserComment;
 import by.wtj.filmrate.bean.UserMark;
 import by.wtj.filmrate.dao.MarkDAO;
 import by.wtj.filmrate.dao.connectionpool.ConnectionPool;
@@ -147,7 +146,7 @@ public class SQLMarkDAO implements MarkDAO {
 
         while(rs.next()){
             UserMark userMark= makeUserMark(rs);
-            userMark.setUserName(SQLCommonDAO.retrieveUserName(
+            userMark.setUserName(CommonSqlRequests.retrieveUserName(
                 userMark.getUserId(), con, autoClosable));
             result.add(userMark);
         }

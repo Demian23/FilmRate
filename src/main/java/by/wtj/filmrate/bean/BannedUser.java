@@ -8,4 +8,5 @@ public class BannedUser {
     String startPeriod;
     String endPeriod;
     int adminBannedId;
+    String adminBannedName;
 }
