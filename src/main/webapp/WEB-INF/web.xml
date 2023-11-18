@@ -72,4 +72,12 @@
         <servlet-name>AdminUsers</servlet-name>
         <url-pattern>/adminUsers</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>FilmNew</servlet-name>
+        <jsp-file>/WEB-INF/jsp/film_new.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FilmNew</servlet-name>
+        <url-pattern>/filmNew</url-pattern>
+    </servlet-mapping>
 </web-app>

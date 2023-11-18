@@ -25,6 +25,7 @@ public final class CommandExecutor {
         commandNameToCommand.put(CommandName.GetUsers, new GetUsers());
         commandNameToCommand.put(CommandName.TakeOffBan, new TakeOffBan());
         commandNameToCommand.put(CommandName.BanUser, new BanUser());
+        commandNameToCommand.put(CommandName.AddNewFilm, new AddNewFilm());
     }
 
     public Command getCommand(String commandName){

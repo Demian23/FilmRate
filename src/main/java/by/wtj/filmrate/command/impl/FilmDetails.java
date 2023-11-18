@@ -30,7 +30,7 @@ public class FilmDetails implements Command {
         if(film.isPresent()){
             completeFilmInfo.setFilm(film.get());
         }else{
-            int languageId = Integer.parseInt(session.getAttribute(SessionAttributes.CURRENT_LANG_ID).toString());
+            int languageId = (Integer)session.getAttribute(SessionAttributes.CURRENT_LANG_ID);
             completeFilmInfo = fillFilm(currentAccess, filmId, languageId);
         }
         fillAdditionalFilmInfo(completeFilmInfo);

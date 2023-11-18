@@ -1,12 +1,11 @@
 package by.wtj.filmrate.dao.impl;
 
+import by.wtj.filmrate.bean.BannedUser;
 import by.wtj.filmrate.bean.TextEntity;
 import by.wtj.filmrate.dao.exception.DAOException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Calendar;
 
 public class CommonSqlRequests {
     static public String retrieveUserName(int userId, Connection con, AutoClosableList list) throws SQLException, DAOException {
@@ -69,6 +68,38 @@ public class CommonSqlRequests {
         else{
             throw new DAOException("No such name for user_id: " + userId);
         }
+    }
 
+    static public void addTextEntity(TextEntity entity, Connection con, AutoClosableList list) throws SQLException, DAOException {
+        // TODO add check if exist
+        setTextEntityId(entity, con, list);
+        if(entity.getTextEntityID() == 0) {
+            String sql = "INSERT INTO `text_entity` (`original_text`, `original_language_id`)" +
+                    "VALUES(?, ?)";
+
+            PreparedStatement preSt = con.prepareStatement(sql);
+            list.add(preSt);
+
+            preSt.setString(1, entity.getTextEntity());
+            preSt.setInt(2, entity.getOriginalLangID());
+
+            int rowsAffected = preSt.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new DAOException("No entity was included");
+            }
+        }
+    }
+
+    static public void setTextEntityId(TextEntity entity, Connection con, AutoClosableList list) throws SQLException {
+        String sql = "SELECT `text_entity_id` FROM `text_entity` WHERE `original_text` = ? AND `original_language_id` = ?;";
+        PreparedStatement preSt = con.prepareStatement(sql);
+        list.add(preSt);
+        preSt.setString(1, entity.getTextEntity());
+        preSt.setInt(2, entity.getOriginalLangID());
+        ResultSet rs = preSt.executeQuery();
+        list.add(rs);
+        if(rs.next()){
+            entity.setTextEntityID(rs.getInt("text_entity_id"));
+        }
     }
 }

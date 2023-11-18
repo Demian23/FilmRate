@@ -11,6 +11,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class SQLFilmDAO implements FilmDAO {
@@ -95,6 +96,47 @@ public class SQLFilmDAO implements FilmDAO {
             return completeFilmInfo;
         } else
             throw new DAOException("No such film");
+    }
+
+    @Override
+    public void addNewFilm(Film newFilm) throws DAOException {
+        try (AutoClosableList autoClosable = new AutoClosableList()) {
+            queryAddFilm(newFilm, autoClosable);
+        } catch (SQLException | IOException | ConnectionPoolException exception) {
+            throw new DAOException(exception);
+        }
+    }
+
+    private void queryAddFilm(Film newFilm, AutoClosableList list) throws ConnectionPoolException, SQLException, DAOException {
+        Connection con = pool.takeConnectionWithAccess(accessToDataBase);
+        list.add(con);
+
+        CommonSqlRequests.addTextEntity(newFilm.getText(), con, list);
+        CommonSqlRequests.setTextEntityId(newFilm.getText(), con, list);
+
+        String sql = "INSERT INTO `film` (`launch_date`, `duration`, `universe_id`, `text_entity_id`, `marks_amount`, " +
+                "`marks_whole_score`, `age_rating`)" +
+                "VALUES(?, ?, ?, ?, ?,?,?)";
+
+        PreparedStatement preSt = con.prepareStatement(sql);
+        list.add(preSt);
+
+        preSt.setDate(1, Date.valueOf(newFilm.getLaunchDate()));
+        preSt.setTime(2, Time.valueOf(newFilm.getDuration()));
+
+        if(newFilm.getUniverseName() == null || newFilm.getUniverseName().isEmpty())
+            preSt.setNull(3, Types.INTEGER);
+        else
+            preSt.setInt(3, newFilm.getUniverseID());
+        preSt.setInt(4, newFilm.getText().getTextEntityID());
+        preSt.setInt(5, newFilm.getWholeMarksAmount());
+        preSt.setInt(6, newFilm.getWholeMarksSum());
+        preSt.setString(7, newFilm.getAgeRating());
+
+        int rowsAffected = preSt.executeUpdate();
+        if(rowsAffected == 0){
+            throw new DAOException("No film inserted");
+        }
     }
 
     private void getFilmDetails(CompleteFilmInfo film, ResultSet rs) throws SQLException {

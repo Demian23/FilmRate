@@ -14,4 +14,8 @@ public class RequestParameterName {
     public static final String BANNED = "banned";
     public static final String USER_ID= "user_id";
 
+    public static final String NEW_FILM_NAME = "film_name";
+    public static final String NEW_FILM_LAUNCH_DATE = "film_launch_date";
+    public static final String NEW_FILM_DURATION = "film_duration";
+    public static final String NEW_FILM_AGE_RATE = "film_age_rate";
 }

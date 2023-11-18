@@ -9,6 +9,7 @@ public class JspPageName {
     public static final String adminMain = "admin";
     public static final String adminUsers = "adminUsers";
     public static final String filmPage= "film";
+    public static final String newFilm = "filmNew";
     public static final String indexPage = "index.html";
     public static final String registrationPage = "registration";
 }
