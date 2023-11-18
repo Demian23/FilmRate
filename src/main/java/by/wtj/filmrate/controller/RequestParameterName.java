@@ -12,4 +12,6 @@ public class RequestParameterName {
     public static final String ERROR_MSG = "errorMsg";
     public static final String LANGUAGE = "language";
     public static final String BANNED = "banned";
+    public static final String USER_ID= "user_id";
+
 }

@@ -22,6 +22,9 @@ public final class CommandExecutor {
         commandNameToCommand.put(CommandName.SetUserMarkAndComment, new SetUserMarkAndComment());
         commandNameToCommand.put(CommandName.AddCommentsToCurrentFilmInSession, new AddCommentsToCurrenFilmInSession());
         commandNameToCommand.put(CommandName.AddMarksToCurrentFilmInSession, new AddMarksToCurrentFilmInSession());
+        commandNameToCommand.put(CommandName.GetUsers, new GetUsers());
+        commandNameToCommand.put(CommandName.TakeOffBan, new TakeOffBan());
+        commandNameToCommand.put(CommandName.BanUser, new BanUser());
     }
 
     public Command getCommand(String commandName){

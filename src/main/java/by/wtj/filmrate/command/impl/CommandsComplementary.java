@@ -3,6 +3,7 @@ package by.wtj.filmrate.command.impl;
 import by.wtj.filmrate.bean.Access;
 import by.wtj.filmrate.bean.Admin;
 import by.wtj.filmrate.bean.User;
+import by.wtj.filmrate.bean.UserWithBan;
 import by.wtj.filmrate.command.SessionAttributes;
 import by.wtj.filmrate.command.exception.CommandException;
 import by.wtj.filmrate.dao.CommentDAO;
@@ -12,6 +13,8 @@ import by.wtj.filmrate.dao.UserDAO;
 import by.wtj.filmrate.dao.exception.DAOException;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
+import java.util.Optional;
 
 public class CommandsComplementary {
     static Access getCurrentAccess(HttpSession session){
@@ -45,5 +48,14 @@ public class CommandsComplementary {
     }
     static public CommentDAO getCommentDAO() throws CommandException {
         return getFactory().getCommentDAO();
+    }
+    public static Optional<UserWithBan> getChosenUser(int userId, HttpSession session){
+        Object sessionValue = session.getAttribute(SessionAttributes.USERS);
+        if(sessionValue != null) {
+            List<UserWithBan> users = (List<UserWithBan>) sessionValue;
+            return users.stream().filter(user -> user.getUser().getUserId() == userId).findAny();
+        } else {
+            return Optional.empty();
+        }
     }
 }

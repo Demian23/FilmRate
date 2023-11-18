@@ -9,7 +9,7 @@
     <title>${sessionScope.get("filmInfo").film.localisedText}</title>
 </head>
 <header>
-    <%@include file="header.jsp"%>
+    <%@include file="user_header.jsp"%>
 </header>
 <body>
 <h1>${sessionScope.get("filmInfo").film.localisedText.localisedText}</h1>
@@ -32,7 +32,7 @@
     <button type="submit">Submit</button>
 </form>
 <!--TODO show other comments and marks (if user want)-->
-<%@include file="comments.jsp"%>
-<%@include file="marks.jsp"%>
+<%@include file="film_comments.jsp"%>
+<%@include file="film_marks.jsp"%>
 </body>
 </html>

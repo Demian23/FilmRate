@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <button><a href="controller?command=LogOut">LogOut</a></button>
+<button><a href="controller?command=FillFilmsInUserPage">To main page</a></button>
 <form action="${pageContext.request.contextPath}/controller" method="post">
     <input type="hidden" name="command" value="ChangeLanguage">
     <label>

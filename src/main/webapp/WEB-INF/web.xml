@@ -42,18 +42,34 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>FilmDetails</servlet-name>
-        <jsp-file>/WEB-INF/jsp/filmDetails.jsp</jsp-file>
+        <jsp-file>/WEB-INF/jsp/film.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
         <servlet-name>FilmDetails</servlet-name>
-        <url-pattern>/filmDetails</url-pattern>
+        <url-pattern>/film</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>BannedUserPage</servlet-name>
-        <jsp-file>/WEB-INF/jsp/banned_user_page.jsp</jsp-file>
+        <jsp-file>/WEB-INF/jsp/user_ban.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
         <servlet-name>BannedUserPage</servlet-name>
-        <url-pattern>/bannedUserPage</url-pattern>
+        <url-pattern>/userBan</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>AdminPage</servlet-name>
+        <jsp-file>/WEB-INF/jsp/admin.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminPage</servlet-name>
+        <url-pattern>/admin</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>AdminUsers</servlet-name>
+        <jsp-file>/WEB-INF/jsp/admin_users.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminUsers</servlet-name>
+        <url-pattern>/adminUsers</url-pattern>
     </servlet-mapping>
 </web-app>

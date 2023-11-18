@@ -38,7 +38,14 @@ public class FillFilmsInUserPage implements Command {
             throw new CommandException(e);
         }
         session.setAttribute(RequestParameterName.FILMS, films);
-        return JspPageName.userPage;
+        switch (access){
+            case Admin:
+                return JspPageName.adminMain;
+            case User:
+            case App:
+            default:
+                return JspPageName.userPage;
+        }
     }
     DAOFactory getFactory() throws CommandException {
         DAOFactory factory;

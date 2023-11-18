@@ -5,9 +5,9 @@
     <title>FilmRate</title>
 </head>
 <header>
-    <%@include file="header.jsp"%>
+    <%@include file="user_header.jsp"%>
 </header>
 <body>
 </body>
-<%@include file="filmsTable.jsp"%>
+<%@include file="films_table.jsp"%>
 </html>

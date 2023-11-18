@@ -7,7 +7,6 @@ import by.wtj.filmrate.command.SessionAttributes;
 import by.wtj.filmrate.command.exception.CommandException;
 import by.wtj.filmrate.controller.JspPageName;
 import by.wtj.filmrate.controller.RequestParameterName;
-import by.wtj.filmrate.dao.AdminDAO;
 import by.wtj.filmrate.dao.DAOFactory;
 import by.wtj.filmrate.dao.UserDAO;
 import by.wtj.filmrate.dao.exception.DAOException;
@@ -26,7 +25,7 @@ public class Authorization implements Command {
         if(isValidUserCredentials(credentials)){
             HttpSession session = request.getSession();
             UserWithBan user = retrieveUser(credentials);
-            if(!user.isBanned()){
+            if(!user.isBan()){
                 redirect = true;
                 trySetAllLanguagesInSession(session);
                 setUserAccessInSession(user.getUser(), session);

@@ -134,7 +134,7 @@ public class SQLUserDAO implements UserDAO {
             UserWithBan user = new UserWithBan();
             user.setUser(newUser);
             Optional<BannedUser> bannedUser = retrieveBannedUserById(newUser.getUserId(), con, closableList);
-            user.setBanned(bannedUser.isPresent());
+            user.setBan(bannedUser.isPresent());
             bannedUser.ifPresent(user::setBannedInfo);
             return Optional.of(user);
         } else {
@@ -188,10 +188,10 @@ public class SQLUserDAO implements UserDAO {
             UserWithBan userWithBan = new UserWithBan();
             userWithBan.setUser(user);
             if(bannedUser != null){
-                userWithBan.setBanned(true);
+                userWithBan.setBan(true);
                 userWithBan.setBannedInfo(bannedUser);
             }else{
-                userWithBan.setBanned(false);
+                userWithBan.setBan(false);
             }
             result.add(userWithBan);
         }
@@ -229,5 +229,74 @@ public class SQLUserDAO implements UserDAO {
             result.put(bannedUser.getUserId(), bannedUser);
         }
         return result;
+    }
+
+    @Override
+    public BannedUser banUser(int userId, int adminId) throws DAOException{
+        try (AutoClosableList autoClosable = new AutoClosableList()){
+            return queryUserBan(userId, adminId, autoClosable);
+        }catch (SQLException | ConnectionPoolException | IOException exception){
+            throw new DAOException(exception);
+        }
+    }
+
+    private BannedUser queryUserBan(int userId, int adminId, AutoClosableList list) throws ConnectionPoolException, SQLException, DAOException {
+        Connection con = pool.takeConnectionWithAccess(accessToDataBase);
+        list.add(con);
+        String sql = "INSERT INTO `banned_user` (`banned_user_id`, `start`, `end`, `admin_banned`)" +
+                "VALUES(?, ?, ?, ?)";
+
+        PreparedStatement preSt = con.prepareStatement(sql);
+        list.add(preSt);
+
+        preSt.setInt(1, userId);
+        Timestamp banStart = new Timestamp(System.currentTimeMillis());
+        preSt.setTimestamp(2, banStart);
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(banStart);
+        c.add(Calendar.DATE, 14); // add 14 days for example
+        Timestamp banEnd = new Timestamp(c.getTime().getTime());
+        preSt.setTimestamp(3, banEnd);
+        preSt.setInt(4, adminId);
+
+        int rowsAffected = preSt.executeUpdate();
+        if(rowsAffected != 0){
+            BannedUser bannedUser = new BannedUser();
+            bannedUser.setUserId(userId);
+            bannedUser.setStartPeriod(banStart.toString());
+            bannedUser.setEndPeriod(banEnd.toString());
+            bannedUser.setAdminBannedId(adminId);
+            return bannedUser;
+        }else{
+            throw new DAOException("No ban affected");
+        }
+    }
+    @Override
+    public boolean takeOffBan(int userId) throws DAOException{
+        try (AutoClosableList autoClosable = new AutoClosableList()){
+            return queryTakeOffBan(userId, autoClosable);
+        }catch (SQLException | ConnectionPoolException | IOException exception){
+            throw new DAOException(exception);
+        }
+    }
+
+    private boolean queryTakeOffBan(int userId, AutoClosableList list) throws ConnectionPoolException, SQLException {
+        Connection con = pool.takeConnectionWithAccess(accessToDataBase);
+        list.add(con);
+        String sql = "DELETE FROM `banned_user` WHERE `banned_user_id` = ?;";
+
+        PreparedStatement preSt = con.prepareStatement(sql);
+        list.add(preSt);
+
+        preSt.setInt(1, userId);
+
+        int rowsAffected = preSt.executeUpdate();
+        if(rowsAffected != 0){
+            return true;
+        }else{
+            return false;
+        }
+
     }
 }

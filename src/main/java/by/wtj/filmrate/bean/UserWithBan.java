@@ -6,5 +6,6 @@ import lombok.Data;
 public class UserWithBan {
     User user;
     BannedUser bannedInfo;
-    boolean isBanned;
+    boolean ban;
+    public boolean isBan(){return ban;}
 }
