@@ -11,6 +11,9 @@ import java.util.*;
 public class ConnectionPool {
     static private ConnectionPool instance = null;
     private final String driverName;
+    /**
+     * can be 3 types of access to DB, the best granted is Admin
+     */
     Map<Access, ConnectionPoolWithSpecificAccess> connectionPools;
 
     private ConnectionPool(){

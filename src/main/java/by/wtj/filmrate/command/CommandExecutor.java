@@ -33,7 +33,6 @@ public final class CommandExecutor {
         try{
             name = CommandName.valueOf(commandName);
         }catch(IllegalArgumentException ex){
-            //TODO log here?
             name = CommandName.NoSuchCommand;
         }
         return commandNameToCommand.get(name);

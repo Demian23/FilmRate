@@ -5,7 +5,6 @@ import by.wtj.filmrate.dao.connectionpool.ConnectionPool;
 import by.wtj.filmrate.dao.connectionpool.exception.ConnectionPoolException;
 import by.wtj.filmrate.dao.exception.DAOException;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class SQLTranslationDAO implements TranslationDAO{
 
     @Override
     public void getTranslation(Translation translation) throws DAOException {
-        try (AutoClosableList autoClosable = new AutoClosableList()){
+        try (AutoCloseableList autoClosable = new AutoCloseableList()){
             queryTranslation(autoClosable, translation);
         }catch (IOException | SQLException | ConnectionPoolException e){
            throw new DAOException(e);
@@ -33,7 +32,7 @@ public class SQLTranslationDAO implements TranslationDAO{
     }
 
 
-    private void queryTranslation(AutoClosableList closable, Translation translation) throws DAOException, SQLException, ConnectionPoolException {
+    private void queryTranslation(AutoCloseableList closable, Translation translation) throws DAOException, SQLException, ConnectionPoolException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
         closable.add(con);
 
@@ -56,14 +55,14 @@ public class SQLTranslationDAO implements TranslationDAO{
 
     @Override
     public int getOriginalLanguageID(int textEntityID) throws DAOException {
-        try (AutoClosableList autoClosable = new AutoClosableList()){
+        try (AutoCloseableList autoClosable = new AutoCloseableList()){
             return queryOriginalLanguageID(autoClosable, textEntityID);
         }catch (IOException | SQLException | ConnectionPoolException e){
             throw new DAOException(e);
         }
     }
 
-    private int queryOriginalLanguageID(AutoClosableList closable, int textEntityID) throws DAOException, SQLException, ConnectionPoolException {
+    private int queryOriginalLanguageID(AutoCloseableList closable, int textEntityID) throws DAOException, SQLException, ConnectionPoolException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
         closable.add(con);
 
@@ -85,7 +84,7 @@ public class SQLTranslationDAO implements TranslationDAO{
 
     @Override
     public List<Language> getAllLanguages() throws DAOException {
-        try (AutoClosableList autoClosable = new AutoClosableList()){
+        try (AutoCloseableList autoClosable = new AutoCloseableList()){
             return queryAllLanguages(autoClosable);
         }catch (IOException | SQLException | ConnectionPoolException e){
             throw new DAOException(e);
@@ -93,7 +92,7 @@ public class SQLTranslationDAO implements TranslationDAO{
     }
 
 
-    private List<Language> queryAllLanguages(AutoClosableList closable) throws DAOException, SQLException, ConnectionPoolException {
+    private List<Language> queryAllLanguages(AutoCloseableList closable) throws DAOException, SQLException, ConnectionPoolException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
         closable.add(con);
 

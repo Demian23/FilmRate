@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AutoClosableList implements AutoCloseable{
+public class AutoCloseableList implements AutoCloseable{
     List<AutoCloseable> objectsToClose;
-    public AutoClosableList(){objectsToClose = new ArrayList<>();}
+    public AutoCloseableList(){objectsToClose = new ArrayList<>();}
 
     void add(AutoCloseable obj){objectsToClose.add(obj);}
 

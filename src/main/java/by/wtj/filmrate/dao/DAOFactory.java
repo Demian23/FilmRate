@@ -20,10 +20,19 @@ public class DAOFactory {
     private final Map<Access, UserDAO> userDAOWithDifferentAccess;
     private final Map<Access, FilmDAO> filmDAOWithDifferentAccess;
     private final Map<Access, TranslationDAO> translationDAOWithDifferentAccess;
+    /**
+     * should be accessed only with App access
+     */
     @Getter
     private final AdminDAO adminDAO;
+    /**
+     * should be accessed only with User access
+     */
     @Getter
     private final CommentDAO commentDAO;
+    /**
+     * should be accessed only with User access
+     */
     @Getter
     private final MarkDAO markDAO;
 

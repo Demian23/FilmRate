@@ -25,7 +25,7 @@ public class SQLMarkDAO implements MarkDAO {
     }
     @Override
     public void getUserMarkToFilm(UserMark mark) throws DAOException {
-        try (AutoClosableList autoClosable = new AutoClosableList()) {
+        try (AutoCloseableList autoClosable = new AutoCloseableList()) {
             Connection con = pool.takeConnectionWithAccess(Access.User);
             autoClosable.add(con);
             mark.setMark(queryUserMark(con, autoClosable, mark));
@@ -34,7 +34,7 @@ public class SQLMarkDAO implements MarkDAO {
         }
     }
 
-    private int queryUserMark(Connection con, AutoClosableList closable, UserMark mark) throws DAOException, SQLException, ConnectionPoolException {
+    private int queryUserMark(Connection con, AutoCloseableList closable, UserMark mark) throws DAOException, SQLException, ConnectionPoolException {
         String sql = "SELECT `value` FROM `m2m_user_film_mark` WHERE `user_id`= ? AND `film_id` = ?";
 
         PreparedStatement preSt = con.prepareStatement(sql);
@@ -51,7 +51,7 @@ public class SQLMarkDAO implements MarkDAO {
     }
     @Override
     public void setUserMarkToFilm(Film film, UserMark mark) throws DAOException {
-        try (AutoClosableList autoClosable = new AutoClosableList()) {
+        try (AutoCloseableList autoClosable = new AutoCloseableList()) {
             Connection con = pool.takeConnectionWithAccess(Access.User);
             autoClosable.add(con);
             int oldMark = queryUserMark(con, autoClosable, mark);
@@ -65,7 +65,7 @@ public class SQLMarkDAO implements MarkDAO {
         }
     }
 
-    private void queryUpdateUserMark(Connection con, AutoClosableList closable, UserMark mark) throws SQLException, DAOException {
+    private void queryUpdateUserMark(Connection con, AutoCloseableList closable, UserMark mark) throws SQLException, DAOException {
         String sql = "UPDATE `m2m_user_film_mark` SET `value` = ? WHERE `user_id`= ? AND `film_id` = ?";
         PreparedStatement preSt = con.prepareStatement(sql);
         closable.add(preSt);
@@ -83,7 +83,7 @@ public class SQLMarkDAO implements MarkDAO {
         }
     }
 
-    private void queryCreateUserMark(Connection con, AutoClosableList closable, UserMark mark) throws DAOException, SQLException {
+    private void queryCreateUserMark(Connection con, AutoCloseableList closable, UserMark mark) throws DAOException, SQLException {
         String sql = "INSERT INTO `m2m_user_film_mark` (`user_id`, `film_id`, `value`)" +
                 " VALUES(?, ?, ?);";
 
@@ -103,7 +103,7 @@ public class SQLMarkDAO implements MarkDAO {
         }
     }
 
-    private void addNewMarkToFilmAverage(Connection con, AutoClosableList closable, Film film, UserMark mark,
+    private void addNewMarkToFilmAverage(Connection con, AutoCloseableList closable, Film film, UserMark mark,
                                          int oldMarkValue) throws SQLException, DAOException {
 
         int marksAmountAddition = 1, wholeScoreAddition = mark.getMark();
@@ -135,14 +135,14 @@ public class SQLMarkDAO implements MarkDAO {
 
 
     public List<UserMark> getAllMarksForFilm(int filmId) throws DAOException {
-        try(AutoClosableList autoClosable = new AutoClosableList()){
+        try(AutoCloseableList autoClosable = new AutoCloseableList()){
             return queryAllMarksForFilm(filmId, autoClosable);
         }catch (SQLException | IOException | ConnectionPoolException exception){
             throw new DAOException(exception);
         }
     }
 
-    private List<UserMark> queryAllMarksForFilm(int filmId, AutoClosableList autoClosable) throws ConnectionPoolException, SQLException, DAOException {
+    private List<UserMark> queryAllMarksForFilm(int filmId, AutoCloseableList autoClosable) throws ConnectionPoolException, SQLException, DAOException {
         List<UserMark> result = new ArrayList<>();
         Connection con = pool.takeConnectionWithAccess(Access.User);
         autoClosable.add(con);

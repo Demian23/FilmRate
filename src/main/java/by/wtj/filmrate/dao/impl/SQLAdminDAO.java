@@ -23,14 +23,14 @@ public class SQLAdminDAO implements AdminDAO {
     }
     @Override
     public Optional<Admin> getAdmin(User user) throws DAOException {
-        try (AutoClosableList autoClosable = new AutoClosableList()){
+        try (AutoCloseableList autoClosable = new AutoCloseableList()){
             return queryAdmin(user, autoClosable);
         }catch (SQLException | ConnectionPoolException | IOException exception){
             throw new DAOException(exception);
         }
     }
 
-    private Optional<Admin> queryAdmin(User user, AutoClosableList autoClosable) throws ConnectionPoolException, SQLException {
+    private Optional<Admin> queryAdmin(User user, AutoCloseableList autoClosable) throws ConnectionPoolException, SQLException {
         Connection con = pool.takeConnectionWithAccess(Access.App);
         autoClosable.add(con);
 

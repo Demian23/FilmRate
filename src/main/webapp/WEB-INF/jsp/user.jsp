@@ -2,7 +2,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>FilmRate</title>
+    <title>FilmRate/User</title>
+    <link href="css/user_page.css" rel="stylesheet" />
 </head>
 <header>
     <%@include file="user_header.jsp"%>

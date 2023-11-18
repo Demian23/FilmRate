@@ -20,7 +20,7 @@ public class SQLCommentDAO implements CommentDAO {
     }
     @Override
     public void setUserCommentToFilm(UserComment comment) throws DAOException {
-        try(AutoClosableList autoClosable = new AutoClosableList()){
+        try(AutoCloseableList autoClosable = new AutoCloseableList()){
             Connection con = pool.takeConnectionWithAccess(Access.User);
             autoClosable.add(con);
             if(isUserCommentExist(con, autoClosable, comment)){
@@ -33,14 +33,14 @@ public class SQLCommentDAO implements CommentDAO {
         }
     }
 
-    private boolean isUserCommentExist(Connection con, AutoClosableList closable, UserComment comment) throws SQLException, DAOException {
+    private boolean isUserCommentExist(Connection con, AutoCloseableList closable, UserComment comment) throws SQLException, DAOException {
         boolean result = false;
         ResultSet rs = queryUserComment(con, closable, comment);
         if(rs.next())
             result = true;
         return result;
     }
-    private void queryCreateUserComment(Connection con, AutoClosableList closable, UserComment comment) throws SQLException, DAOException {
+    private void queryCreateUserComment(Connection con, AutoCloseableList closable, UserComment comment) throws SQLException, DAOException {
         String sql = "INSERT INTO `comment` (`user_id`, `film_id`, `score`, `text`, `date`)" +
                 "VALUES(?, ?, ?, ?, ?)";
 
@@ -73,7 +73,7 @@ public class SQLCommentDAO implements CommentDAO {
         }
     }
 
-    private void queryUserCommentId(Connection con, AutoClosableList closable, UserComment comment) throws SQLException {
+    private void queryUserCommentId(Connection con, AutoCloseableList closable, UserComment comment) throws SQLException {
         String sql = "SELECT `comment_id` FROM `comment` WHERE `user_id`= ? AND `film_id` = ?;";
         PreparedStatement preSt = con.prepareStatement(sql);
         closable.add(preSt);
@@ -88,7 +88,7 @@ public class SQLCommentDAO implements CommentDAO {
             comment.setCommentId(UserComment.NO_COMMENT_ID);
     }
 
-    private void queryUpdateUserComment(Connection con, AutoClosableList closable, UserComment comment) throws SQLException, DAOException {
+    private void queryUpdateUserComment(Connection con, AutoCloseableList closable, UserComment comment) throws SQLException, DAOException {
         String sql = "UPDATE `comment` SET `score` = ?, `text` = ?, `date` = ? WHERE `comment_id`= ?;";
 
         PreparedStatement preSt = con.prepareStatement(sql);
@@ -114,7 +114,7 @@ public class SQLCommentDAO implements CommentDAO {
 
     @Override
     public void getUserCommentToFilm(UserComment comment) throws DAOException {
-        try(AutoClosableList autoClosable = new AutoClosableList()){
+        try(AutoCloseableList autoClosable = new AutoCloseableList()){
             Connection con = pool.takeConnectionWithAccess(Access.User);
             autoClosable.add(con);
             ResultSet rs = queryUserComment(con, autoClosable, comment);
@@ -128,7 +128,7 @@ public class SQLCommentDAO implements CommentDAO {
     }
 
 
-    private ResultSet queryUserComment(Connection con, AutoClosableList closable, UserComment comment) throws DAOException, SQLException {
+    private ResultSet queryUserComment(Connection con, AutoCloseableList closable, UserComment comment) throws DAOException, SQLException {
         String sql = "SELECT * FROM `comment` WHERE `user_id`= ? AND `film_id` = ?;";
         PreparedStatement preSt = con.prepareStatement(sql);
         closable.add(preSt);
@@ -150,14 +150,14 @@ public class SQLCommentDAO implements CommentDAO {
 
     @Override
     public List<UserComment> getAllCommentsForFilm(int filmId) throws DAOException {
-        try(AutoClosableList autoClosable = new AutoClosableList()){
+        try(AutoCloseableList autoClosable = new AutoCloseableList()){
             return queryAllCommentsForFilm(filmId, autoClosable);
         }catch (SQLException | IOException | ConnectionPoolException exception){
             throw new DAOException(exception);
         }
     }
 
-    private List<UserComment> queryAllCommentsForFilm(int filmId, AutoClosableList autoClosable) throws ConnectionPoolException, SQLException, DAOException {
+    private List<UserComment> queryAllCommentsForFilm(int filmId, AutoCloseableList autoClosable) throws ConnectionPoolException, SQLException, DAOException {
         List<UserComment> result = new ArrayList<>();
         Connection con = pool.takeConnectionWithAccess(Access.User);
         autoClosable.add(con);

@@ -1,0 +1,11 @@
+.films_table{
+    font-family: "Gill Sans", serif;
+    font-size: x-large;
+    background: bisque;
+}
+
+.films_table tr{
+}
+.films_table tr td{
+    border: 3px solid mediumpurple;
+}

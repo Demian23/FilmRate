@@ -21,7 +21,7 @@ public class SQLUserDAO implements UserDAO {
     }
     @Override
     public void registration(NewUser user) throws DAOException {
-        try (AutoClosableList autoClosable = new AutoClosableList()){
+        try (AutoCloseableList autoClosable = new AutoCloseableList()){
             regNewUser(user, autoClosable);
         }catch (SQLException | ConnectionPoolException | IOException exception){
             throw new DAOException(exception);
@@ -29,7 +29,7 @@ public class SQLUserDAO implements UserDAO {
 
     }
 
-    private void regNewUser(NewUser user, AutoClosableList autoClosable) throws ConnectionPoolException, DAOException, SQLException {
+    private void regNewUser(NewUser user, AutoCloseableList autoClosable) throws ConnectionPoolException, DAOException, SQLException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
         autoClosable.add(con);
         if(!isUserExist(user.getUserName(), con, autoClosable)){
@@ -43,7 +43,7 @@ public class SQLUserDAO implements UserDAO {
         }
 
     }
-    private void insertNewUser(NewUser user, int mailId, Connection con, AutoClosableList autoClosable) throws SQLException, DAOException {
+    private void insertNewUser(NewUser user, int mailId, Connection con, AutoCloseableList autoClosable) throws SQLException, DAOException {
         String sql = "INSERT INTO `user` (`name`, `password_hash`, `mail_id`, `user_rate`)" +
                 "VALUES(?, ?, ?, ?)";
         PreparedStatement preSt = con.prepareStatement(sql);
@@ -64,7 +64,7 @@ public class SQLUserDAO implements UserDAO {
         }
 
     }
-    boolean isUserExist(String name, Connection con, AutoClosableList autoClosable) throws SQLException {
+    boolean isUserExist(String name, Connection con, AutoCloseableList autoClosable) throws SQLException {
         String sql = "SELECT `user_id` FROM `user` WHERE `name` = ?;";
         PreparedStatement preSt = con.prepareStatement(sql);
         autoClosable.add( preSt);
@@ -77,7 +77,7 @@ public class SQLUserDAO implements UserDAO {
         return rs.next();
     }
 
-    private void tryInsertNewMain(String mail, Connection con, AutoClosableList autoClosable) throws SQLException, DAOException {
+    private void tryInsertNewMain(String mail, Connection con, AutoCloseableList autoClosable) throws SQLException, DAOException {
         String sql = "INSERT INTO `mail` (`mail_value`, `is_verified`, `verification_time`)" +
                 "VALUES(?, ?, ?)";
 
@@ -95,7 +95,7 @@ public class SQLUserDAO implements UserDAO {
             throw daoException;
         }
     }
-    private int queryMailId(String mail, Connection con , AutoClosableList closableList) throws SQLException, DAOException {
+    private int queryMailId(String mail, Connection con , AutoCloseableList closableList) throws SQLException, DAOException {
         String sql = "SELECT `mail_id` FROM `mail` WHERE `mail_value` = ?;";
         PreparedStatement preSt = con.prepareStatement(sql);
         closableList.add( preSt);
@@ -118,7 +118,7 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public Optional<UserWithBan> getUser(UserCredentials credentials) throws DAOException {
-        try (AutoClosableList autoClosable = new AutoClosableList()){
+        try (AutoCloseableList autoClosable = new AutoCloseableList()){
             return queryUser(credentials, autoClosable);
         }catch (SQLException | ConnectionPoolException | IOException exception){
             throw new DAOException(exception);
@@ -126,7 +126,7 @@ public class SQLUserDAO implements UserDAO {
     }
 
 
-    private Optional<UserWithBan> queryUser(UserCredentials credentials, AutoClosableList closableList) throws ConnectionPoolException, SQLException, DAOException {
+    private Optional<UserWithBan> queryUser(UserCredentials credentials, AutoCloseableList closableList) throws ConnectionPoolException, SQLException, DAOException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
         closableList.add(con);
 
@@ -154,7 +154,7 @@ public class SQLUserDAO implements UserDAO {
         }
     }
 
-    private Optional<BannedUser> retrieveBannedUserById(int id, Connection con, AutoClosableList list) throws SQLException, DAOException {
+    private Optional<BannedUser> retrieveBannedUserById(int id, Connection con, AutoCloseableList list) throws SQLException, DAOException {
         String sql = "SELECT * FROM `banned_user` WHERE `banned_user_id` = ?;";
         PreparedStatement preSt = con.prepareStatement(sql);
         list.add( preSt);
@@ -170,7 +170,7 @@ public class SQLUserDAO implements UserDAO {
         }
     }
 
-    private BannedUser fillBannedUser(ResultSet rs, Connection con, AutoClosableList list) throws SQLException, DAOException {
+    private BannedUser fillBannedUser(ResultSet rs, Connection con, AutoCloseableList list) throws SQLException, DAOException {
         BannedUser bannedUser = new BannedUser();
         bannedUser.setAdminBannedId(rs.getInt("admin_banned"));
         bannedUser.setUserId(rs.getInt("banned_user_id"));
@@ -182,14 +182,14 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public List<UserWithBan> getAllUsers()throws DAOException{
-        try (AutoClosableList autoClosable = new AutoClosableList()){
+        try (AutoCloseableList autoClosable = new AutoCloseableList()){
             return queryAllUsers(autoClosable);
         }catch (SQLException | ConnectionPoolException | IOException exception){
             throw new DAOException(exception);
         }
     }
 
-    private List<UserWithBan> queryAllUsers(AutoClosableList list) throws ConnectionPoolException, SQLException, DAOException {
+    private List<UserWithBan> queryAllUsers(AutoCloseableList list) throws ConnectionPoolException, SQLException, DAOException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
         list.add(con);
         List<UserWithBan> result = new ArrayList<>();
@@ -210,7 +210,7 @@ public class SQLUserDAO implements UserDAO {
         return result;
     }
 
-    private List<User> queryUsers(Connection con, AutoClosableList list) throws SQLException {
+    private List<User> queryUsers(Connection con, AutoCloseableList list) throws SQLException {
         Statement st = con.createStatement();
         list.add(st);
 
@@ -226,7 +226,7 @@ public class SQLUserDAO implements UserDAO {
         return result;
     }
 
-    private Map<Integer, BannedUser> queryBannedUsers(Connection con, AutoClosableList list) throws SQLException, DAOException {
+    private Map<Integer, BannedUser> queryBannedUsers(Connection con, AutoCloseableList list) throws SQLException, DAOException {
         Statement st = con.createStatement();
         list.add(st);
 
@@ -245,14 +245,14 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public BannedUser banUser(int userId, int adminId) throws DAOException{
-        try (AutoClosableList autoClosable = new AutoClosableList()){
+        try (AutoCloseableList autoClosable = new AutoCloseableList()){
             return queryUserBan(userId, adminId, autoClosable);
         }catch (SQLException | ConnectionPoolException | IOException exception){
             throw new DAOException(exception);
         }
     }
 
-    private BannedUser queryUserBan(int userId, int adminId, AutoClosableList list) throws ConnectionPoolException, SQLException, DAOException {
+    private BannedUser queryUserBan(int userId, int adminId, AutoCloseableList list) throws ConnectionPoolException, SQLException, DAOException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
         list.add(con);
         String sql = "INSERT INTO `banned_user` (`banned_user_id`, `start`, `end`, `admin_banned`)" +
@@ -290,14 +290,14 @@ public class SQLUserDAO implements UserDAO {
     }
     @Override
     public boolean takeOffBan(int userId) throws DAOException{
-        try (AutoClosableList autoClosable = new AutoClosableList()){
+        try (AutoCloseableList autoClosable = new AutoCloseableList()){
             return queryTakeOffBan(userId, autoClosable);
         }catch (SQLException | ConnectionPoolException | IOException exception){
             throw new DAOException(exception);
         }
     }
 
-    private boolean queryTakeOffBan(int userId, AutoClosableList list) throws ConnectionPoolException, SQLException {
+    private boolean queryTakeOffBan(int userId, AutoCloseableList list) throws ConnectionPoolException, SQLException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
         list.add(con);
         String sql = "DELETE FROM `banned_user` WHERE `banned_user_id` = ?;";

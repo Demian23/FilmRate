@@ -1,17 +1,14 @@
 package by.wtj.filmrate.dao.impl;
 
 import by.wtj.filmrate.bean.*;
-import by.wtj.filmrate.command.Command;
 import by.wtj.filmrate.dao.FilmDAO;
 import by.wtj.filmrate.dao.connectionpool.ConnectionPool;
 import by.wtj.filmrate.dao.connectionpool.exception.ConnectionPoolException;
 import by.wtj.filmrate.dao.exception.DAOException;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class SQLFilmDAO implements FilmDAO {
@@ -26,14 +23,14 @@ public class SQLFilmDAO implements FilmDAO {
 
     @Override
     public List<Film> getAllFilms() throws DAOException {
-        try (AutoClosableList autoClosable = new AutoClosableList()) {
+        try (AutoCloseableList autoClosable = new AutoCloseableList()) {
             return queryAllFilms(autoClosable);
         } catch (SQLException | IOException | ConnectionPoolException exception) {
             throw new DAOException(exception);
         }
     }
 
-    private List<Film> queryAllFilms(AutoClosableList autoClosable) throws DAOException, SQLException, ConnectionPoolException {
+    private List<Film> queryAllFilms(AutoCloseableList autoClosable) throws DAOException, SQLException, ConnectionPoolException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
         autoClosable.add(con);
 
@@ -67,7 +64,7 @@ public class SQLFilmDAO implements FilmDAO {
 
     @Override
     public CompleteFilmInfo getFilm(int filmId) throws DAOException {
-        try (AutoClosableList autoClosable = new AutoClosableList()) {
+        try (AutoCloseableList autoClosable = new AutoCloseableList()) {
             return queryFilm(filmId, autoClosable);
         } catch (SQLException | IOException | ConnectionPoolException exception) {
             throw new DAOException(exception);
@@ -75,7 +72,7 @@ public class SQLFilmDAO implements FilmDAO {
     }
 
 
-    private CompleteFilmInfo queryFilm(int filmID, AutoClosableList closable) throws DAOException, SQLException, ConnectionPoolException {
+    private CompleteFilmInfo queryFilm(int filmID, AutoCloseableList closable) throws DAOException, SQLException, ConnectionPoolException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
         closable.add(con);
 
@@ -103,14 +100,14 @@ public class SQLFilmDAO implements FilmDAO {
 
     @Override
     public void addNewFilm(Film newFilm) throws DAOException {
-        try (AutoClosableList autoClosable = new AutoClosableList()) {
+        try (AutoCloseableList autoClosable = new AutoCloseableList()) {
             queryAddFilm(newFilm, autoClosable);
         } catch (SQLException | IOException | ConnectionPoolException exception) {
             throw new DAOException(exception);
         }
     }
 
-    private void queryAddFilm(Film newFilm, AutoClosableList list) throws ConnectionPoolException, SQLException, DAOException {
+    private void queryAddFilm(Film newFilm, AutoCloseableList list) throws ConnectionPoolException, SQLException, DAOException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
         list.add(con);
 
@@ -148,13 +145,5 @@ public class SQLFilmDAO implements FilmDAO {
 
     private void getFilmDetails(CompleteFilmInfo film, ResultSet rs) throws SQLException {
         //TODO if universe id not null get universe name
-    }
-
-
-
-
-    @Override
-    public void updateFilm(CompleteFilmInfo filmInfo) {
-
     }
 }

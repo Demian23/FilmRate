@@ -2,7 +2,13 @@ package by.wtj.filmrate.exception;
 
 public class FilmRateException extends Exception{
     private static final long serialVersionUID = 1L;
+    /**
+     * is logged as INFO priority
+     */
     protected String msgForUser = "";
+    /**
+     * is logged as ERROR priority with causeModule info
+     */
     protected String logMsg = "";
     protected String causeModule = "";
 

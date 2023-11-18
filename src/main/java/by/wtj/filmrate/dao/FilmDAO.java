@@ -9,5 +9,4 @@ public interface FilmDAO {
     List<Film> getAllFilms() throws DAOException;
     CompleteFilmInfo getFilm(int filmId)throws DAOException;
     void addNewFilm(Film newFilm)throws DAOException;
-    void updateFilm(CompleteFilmInfo filmInfo);
 }

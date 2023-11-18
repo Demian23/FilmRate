@@ -1,15 +1,12 @@
 package by.wtj.filmrate.dao.impl;
 
-import by.wtj.filmrate.bean.BannedUser;
 import by.wtj.filmrate.bean.TextEntity;
 import by.wtj.filmrate.dao.exception.DAOException;
-import lombok.Data;
 
 import java.sql.*;
-import java.util.Calendar;
 
 public class CommonSqlRequests {
-    static public String retrieveUserName(int userId, Connection con, AutoClosableList list) throws SQLException, DAOException {
+    static public String retrieveUserName(int userId, Connection con, AutoCloseableList list) throws SQLException, DAOException {
         String sql = "SELECT `name` FROM `user` WHERE `user_id` = ?;";
 
         PreparedStatement preSt = con.prepareStatement(sql);
@@ -26,7 +23,7 @@ public class CommonSqlRequests {
             throw daoException;
         }
     }
-    static public TextEntity getTextEntity(Connection con, AutoClosableList closable, int textEntityId) throws SQLException, DAOException {
+    static public TextEntity getTextEntity(Connection con, AutoCloseableList closable, int textEntityId) throws SQLException, DAOException {
         String sql = "SELECT * FROM `text_entity` WHERE `text_entity_id` = ?;";
         PreparedStatement preSt = con.prepareStatement(sql);
         closable.add( preSt);
@@ -47,7 +44,7 @@ public class CommonSqlRequests {
         return entity;
     }
 
-    static public String getAdminName(int adminId, Connection con, AutoClosableList closableList) throws SQLException, DAOException {
+    static public String getAdminName(int adminId, Connection con, AutoCloseableList closableList) throws SQLException, DAOException {
         String sql = "SELECT `user_id` FROM `admin` WHERE `admin_id` = ?;";
         PreparedStatement preSt = con.prepareStatement(sql);
         closableList.add( preSt);
@@ -63,7 +60,7 @@ public class CommonSqlRequests {
             throw daoException;
         }
     }
-    static public String getUserNameById(int userId, Connection con, AutoClosableList list) throws SQLException, DAOException {
+    static public String getUserNameById(int userId, Connection con, AutoCloseableList list) throws SQLException, DAOException {
         String sql = "SELECT `name` FROM `user` WHERE `user_id` = ?;";
         PreparedStatement preSt = con.prepareStatement(sql);
         list.add(preSt);
@@ -79,7 +76,7 @@ public class CommonSqlRequests {
         }
     }
 
-    static public void addTextEntity(TextEntity entity, Connection con, AutoClosableList list) throws SQLException, DAOException {
+    static public void addTextEntity(TextEntity entity, Connection con, AutoCloseableList list) throws SQLException, DAOException {
         // TODO add check if exist
         setTextEntityId(entity, con, list);
         if(entity.getTextEntityID() == TextEntity.NO_ID) {
@@ -104,7 +101,7 @@ public class CommonSqlRequests {
         }
     }
 
-    static public void setTextEntityId(TextEntity entity, Connection con, AutoClosableList list) throws SQLException {
+    static public void setTextEntityId(TextEntity entity, Connection con, AutoCloseableList list) throws SQLException {
         String sql = "SELECT `text_entity_id` FROM `text_entity` WHERE `original_text` = ? AND `original_language_id` = ?;";
         PreparedStatement preSt = con.prepareStatement(sql);
         list.add(preSt);
