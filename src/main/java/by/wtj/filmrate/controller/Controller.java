@@ -2,8 +2,7 @@ package by.wtj.filmrate.controller;
 
 import by.wtj.filmrate.command.CommandExecutor;
 import by.wtj.filmrate.command.Command;
-import by.wtj.filmrate.command.exception.CommandException;
-import by.wtj.filmrate.command.impl.NoSuchCommand;
+import by.wtj.filmrate.exception.FilmRateException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,8 +13,11 @@ import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+
 public class Controller extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private final static Logger logger = Logger.getLogger(Controller.class);
     public Controller(){
         super();
     }
@@ -37,18 +39,21 @@ public class Controller extends HttpServlet {
         String page;
         try{
             page = command.execute(request);
-        } catch (CommandException exception){
-            System.out.println(exception.getMessage());
-            request.setAttribute(RequestParameterName.ERROR_MSG, exception.getMessage());
-            //TODO log
+        }catch(FilmRateException e){
+            request.setAttribute(RequestParameterName.ERROR_MSG, e.getMsgForUser());
+            if(e.getLogMsg() != null && !e.getLogMsg().isEmpty()){
+                logger.error(e.getLogMsg() + "cause: " + e.getCauseModule());
+            }
+            if(e.getMsgForUser() != null && !e.getMsgForUser().isEmpty())
+                logger.info(e.getMsgForUser());
+            else
+                logger.error(e.getMessage(), e);
             page = JspPageName.errorPage;
             isRedirect = false;
-        } catch (Exception exception){
-           //TODO log with another priority
-            System.out.println(exception.getMessage());
+        } catch (Exception e){
+            logger.error(e.getMessage(), e);
             page = JspPageName.errorPage;
             isRedirect = false;
-            request.setAttribute(RequestParameterName.ERROR_MSG, exception.getMessage());
         }
         if(isRedirect){
             response.sendRedirect(request.getContextPath() + "/" + page);

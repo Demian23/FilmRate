@@ -37,7 +37,9 @@ public class SQLUserDAO implements UserDAO {
             int mailId = queryMailId(user.getMail(), con, autoClosable);
             insertNewUser(user, mailId, con, autoClosable);
         }else{
-            throw new DAOException("User with name: " + user.getUserName() + " already exist!");
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("User with name: " + user.getUserName() + " already exist!");
+            throw daoException;
         }
 
     }
@@ -54,7 +56,11 @@ public class SQLUserDAO implements UserDAO {
 
         int rowsAffected = preSt.executeUpdate();
         if(rowsAffected == 0){
-            throw new DAOException("Can't add user: " + user.getUserName());
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("Can't add user: " + user.getUserName());
+            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
+            throw daoException;
         }
 
     }
@@ -84,7 +90,9 @@ public class SQLUserDAO implements UserDAO {
 
         int rowsAffected = preSt.executeUpdate();
         if(rowsAffected == 0){
-            throw new DAOException("Such mail already exist");
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("Mail: " + mail + " already exist!");
+            throw daoException;
         }
     }
     private int queryMailId(String mail, Connection con , AutoClosableList closableList) throws SQLException, DAOException {
@@ -100,7 +108,11 @@ public class SQLUserDAO implements UserDAO {
         if(rs.next()){
             return rs.getInt("mail_id");
         }else{
-            throw new DAOException("No such mail: " + mail);
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("Mail: " + mail + " already exist!");
+            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
+            throw daoException;
         }
     }
 
@@ -269,7 +281,11 @@ public class SQLUserDAO implements UserDAO {
             bannedUser.setAdminBannedId(adminId);
             return bannedUser;
         }else{
-            throw new DAOException("No ban affected");
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("Can't ban user with id: " + userId);
+            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
+            throw daoException;
         }
     }
     @Override
@@ -292,11 +308,7 @@ public class SQLUserDAO implements UserDAO {
         preSt.setInt(1, userId);
 
         int rowsAffected = preSt.executeUpdate();
-        if(rowsAffected != 0){
-            return true;
-        }else{
-            return false;
-        }
+        return rowsAffected != 0;
 
     }
 }

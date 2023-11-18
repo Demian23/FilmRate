@@ -94,8 +94,11 @@ public class SQLFilmDAO implements FilmDAO {
                     CommonSqlRequests.getTextEntity(con, closable, rs.getInt("text_entity_id")));
             getFilmDetails(completeFilmInfo, rs);
             return completeFilmInfo;
-        } else
-            throw new DAOException("No such film");
+        } else {
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("No film with id: " + filmID);
+            throw daoException;
+        }
     }
 
     @Override
@@ -135,7 +138,11 @@ public class SQLFilmDAO implements FilmDAO {
 
         int rowsAffected = preSt.executeUpdate();
         if(rowsAffected == 0){
-            throw new DAOException("No film inserted");
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("Can't add film: " + newFilm.getText().getTextEntity());
+            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
+            throw daoException;
         }
     }
 

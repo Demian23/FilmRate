@@ -33,7 +33,11 @@ public class ConnectionPoolWithSpecificAccess {
                 connections.add(pooledConnection);
             }
         } catch (SQLException e) {
-            throw new ConnectionPoolException("Can't get connection with access: " + access.toString(), e);
+            ConnectionPoolException connectionPoolException = new ConnectionPoolException(e);
+            connectionPoolException.setMsgForUser("Can't connect to database");
+            connectionPoolException.setLogMsg("Can't connect to database with access" + access.toString());
+            connectionPoolException.addCauseModule(connectionPoolException.getStackTrace()[0].getModuleName()+"."+connectionPoolException.getStackTrace()[0].getMethodName());
+            throw connectionPoolException;
         }
     }
 
@@ -42,7 +46,11 @@ public class ConnectionPoolWithSpecificAccess {
             closeConnectionQueue(givenAwayConnections);
             closeConnectionQueue(connections);
         }catch(SQLException e){
-            throw new ConnectionPoolException("Can't close connection queue with access: " + access.toString(), e);
+            ConnectionPoolException connectionPoolException = new ConnectionPoolException(e);
+            connectionPoolException.setMsgForUser("Can't close connection queue");
+            connectionPoolException.setLogMsg("Can't close connection queue with access" + access.toString());
+            connectionPoolException.addCauseModule(connectionPoolException.getStackTrace()[0].getModuleName()+"."+connectionPoolException.getStackTrace()[0].getMethodName());
+            throw connectionPoolException;
         }
     }
 
@@ -61,7 +69,11 @@ public class ConnectionPoolWithSpecificAccess {
             con = connections.take();
             givenAwayConnections.add(con);
         }catch(InterruptedException e){
-           throw new ConnectionPoolException("Error while connection to db with access: " + access.toString(), e);
+            ConnectionPoolException connectionPoolException = new ConnectionPoolException(e);
+            connectionPoolException.setMsgForUser("Can't get connection from queue");
+            connectionPoolException.setLogMsg("Error with access" + access.toString());
+            connectionPoolException.addCauseModule(connectionPoolException.getStackTrace()[0].getModuleName()+"."+connectionPoolException.getStackTrace()[0].getMethodName());
+            throw connectionPoolException;
         }
         return con;
     }

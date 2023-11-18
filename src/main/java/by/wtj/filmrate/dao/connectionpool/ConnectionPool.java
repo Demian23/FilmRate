@@ -2,6 +2,7 @@ package by.wtj.filmrate.dao.connectionpool;
 
 import by.wtj.filmrate.bean.Access;
 import by.wtj.filmrate.dao.connectionpool.exception.ConnectionPoolException;
+import by.wtj.filmrate.dao.exception.DAOException;
 import lombok.Getter;
 
 import java.sql.*;
@@ -59,7 +60,11 @@ public class ConnectionPool {
                conPool.getValue().initPoolData();
            }
         } catch (ClassNotFoundException e) {
-            throw new ConnectionPoolException("Database driver class not found", e);
+            ConnectionPoolException connectionPoolException = new ConnectionPoolException(e);
+            connectionPoolException.setMsgForUser("Can't connect to database");
+            connectionPoolException.setLogMsg("Driver: " + driverName + " not found");
+            connectionPoolException.addCauseModule(connectionPoolException.getStackTrace()[0].getModuleName()+"."+connectionPoolException.getStackTrace()[0].getMethodName());
+            throw connectionPoolException;
         }
     }
 
@@ -67,7 +72,11 @@ public class ConnectionPool {
         try {
             return connectionPools.get(callerAccess).takeConnection();
         }catch(NullPointerException e){
-            throw new ConnectionPoolException("Unexpected access value: " + callerAccess.toString(), e);
+            ConnectionPoolException connectionPoolException = new ConnectionPoolException(e);
+            connectionPoolException.setMsgForUser("Wrong access");
+            connectionPoolException.setLogMsg("Unexpected access value: " + callerAccess.toString());
+            connectionPoolException.addCauseModule(connectionPoolException.getStackTrace()[0].getModuleName()+"."+connectionPoolException.getStackTrace()[0].getMethodName());
+            throw connectionPoolException;
         }
     }
 }

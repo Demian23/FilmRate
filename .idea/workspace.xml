@@ -9,20 +9,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a6d5c0dc-adf3-41d8-abf5-6e9538e765f7" name="Changes" comment="Admin can ban and take off bans">
-      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/AddNewFilm.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/jsp/film_new.jsp" afterDir="false" />
+    <list default="true" id="a6d5c0dc-adf3-41d8-abf5-6e9538e765f7" name="Changes" comment="Admin now can add new film">
+      <change afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/exception/FilmRateException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/log4j.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/CommandExecutor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/CommandExecutor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/CommandName.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/CommandName.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/FilmDetails.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/FilmDetails.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/controller/JspPageName.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/controller/JspPageName.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/controller/RequestParameterName.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/controller/RequestParameterName.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/FilmDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/FilmDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/bean/TextEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/bean/TextEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/exception/CommandException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/exception/CommandException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/AddNewFilm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/AddNewFilm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/Authorization.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/Authorization.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/BanUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/BanUser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/Registration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/Registration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/TakeOffBan.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/TakeOffBan.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/controller/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/controller/Controller.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/ConnectionPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/ConnectionPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/ConnectionPoolWithSpecificAccess.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/ConnectionPoolWithSpecificAccess.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/exception/ConnectionPoolException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/exception/ConnectionPoolException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/exception/DAOException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/exception/DAOException.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/CommonSqlRequests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/CommonSqlRequests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLCommentDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLCommentDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLFilmDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLFilmDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/jsp/admin_header.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/jsp/admin_header.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLMarkDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLMarkDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLTranslationDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLTranslationDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLUserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLUserDAO.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -394,6 +403,7 @@
       <workItem from="1700230116903" duration="43000" />
       <workItem from="1700294574453" duration="13533000" />
       <workItem from="1700308646664" duration="34000" />
+      <workItem from="1700311071016" duration="8328000" />
     </task>
     <task id="LOCAL-00001" summary="Start implementing project architecture">
       <option name="closed" value="true" />
@@ -491,7 +501,15 @@
       <option name="project" value="LOCAL" />
       <updated>1700303279984</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Admin now can add new film">
+      <option name="closed" value="true" />
+      <created>1700311112417</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1700311112417</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -538,7 +556,8 @@
     <MESSAGE value="Add MarkDAO and marks all marks showing to user" />
     <MESSAGE value="Implement checks on user ban" />
     <MESSAGE value="Admin can ban and take off bans" />
-    <option name="LAST_COMMIT_MESSAGE" value="Admin can ban and take off bans" />
+    <MESSAGE value="Admin now can add new film" />
+    <option name="LAST_COMMIT_MESSAGE" value="Admin now can add new film" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -555,18 +574,28 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/CommonSqlRequests.java</url>
-          <line>50</line>
+          <line>55</line>
           <option name="timeStamp" value="20" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/impl/SQLFilmDAO.java</url>
-          <line>113</line>
+          <line>116</line>
           <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/by/wtj/filmrate/command/impl/AddNewFilm.java</url>
           <line>22</line>
           <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/by/wtj/filmrate/controller/Controller.java</url>
+          <line>42</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/by/wtj/filmrate/dao/connectionpool/ConnectionPool.java</url>
+          <line>62</line>
+          <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

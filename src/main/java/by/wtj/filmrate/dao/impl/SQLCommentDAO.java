@@ -57,10 +57,19 @@ public class SQLCommentDAO implements CommentDAO {
         int rowsAffected = preSt.executeUpdate();
         if(rowsAffected != 0){
             queryUserCommentId(con, closable, comment);
-            if(comment.getCommentId() == UserComment.NO_COMMENT_ID)
-                throw new DAOException("After insertion no comment id found");
+            if(comment.getCommentId() == UserComment.NO_COMMENT_ID) {
+                DAOException daoException = new DAOException();
+                daoException.setMsgForUser("Can't add " + comment.getText());
+                daoException.setLogMsg("No comment_id after inserting comment: " + comment.getText());
+                daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
+                throw new DAOException("");
+            }
         }else {
-            throw new DAOException("No comment was affected!");
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("Can't add " + comment.getText());
+            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
+            throw daoException;
         }
     }
 
@@ -95,7 +104,11 @@ public class SQLCommentDAO implements CommentDAO {
         if(rowsAffected != 0){
             comment.setDate(commentDate.toString());
         }else {
-            throw new DAOException("No comment was affected!");
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("Can't update " + comment.getText());
+            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
+            throw daoException;
         }
     }
 

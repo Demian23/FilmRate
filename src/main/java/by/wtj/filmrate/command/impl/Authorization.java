@@ -36,8 +36,11 @@ public class Authorization implements Command {
                 request.setAttribute(RequestParameterName.BANNED, user.getBannedInfo());
                 return JspPageName.bannedUserPage;
             }
-        }else
-            throw new CommandException("Invalid credentials.");
+        }else{
+            CommandException commandException = new CommandException();
+            commandException.setMsgForUser("Invalid user credentials");
+            throw commandException;
+        }
     }
 
     private UserCredentials setUserCredentials(HttpServletRequest request){
@@ -74,7 +77,9 @@ public class Authorization implements Command {
         if(user.isPresent()) {
             return user.get();
         } else{
-            throw new CommandException("No such user");
+            CommandException commandException = new CommandException();
+            commandException.setMsgForUser("No such user");
+            throw commandException;
         }
     }
 

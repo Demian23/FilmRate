@@ -75,7 +75,11 @@ public class SQLMarkDAO implements MarkDAO {
 
         int rowsAffected = preSt.executeUpdate();
         if (rowsAffected == 0) {
-            throw new DAOException("No mark was affected!");
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("Can't update mark: " + mark.getMark());
+            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
+            throw daoException;
         }
     }
 
@@ -91,7 +95,11 @@ public class SQLMarkDAO implements MarkDAO {
 
         int rowsAffected = preSt.executeUpdate();
         if (rowsAffected == 0) {
-            throw new DAOException("No mark was affected!");
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("Can't add mark: " + mark.getMark());
+            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
+            throw daoException;
         }
     }
 
@@ -117,7 +125,11 @@ public class SQLMarkDAO implements MarkDAO {
             film.setWholeMarksSum(film.getWholeMarksSum() + wholeScoreAddition);
             film.setWholeMarksAmount(film.getWholeMarksAmount() + marksAmountAddition);
         } else {
-            throw new DAOException("No film was affected!");
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("Can't add mark: " + mark.getMark() + "to film: " + film.getText().getTextEntity());
+            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
+            throw daoException;
         }
     }
 
@@ -160,5 +172,4 @@ public class SQLMarkDAO implements MarkDAO {
         result.setFilmId(rs.getInt("film_id"));
         return result;
     }
-
 }

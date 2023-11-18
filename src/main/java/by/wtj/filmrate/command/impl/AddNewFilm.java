@@ -48,7 +48,9 @@ public class AddNewFilm implements Command {
             result.setUniverseName(null);
             return result;
         }else{
-            throw new CommandException("Invalid film params");
+            CommandException commandException = new CommandException();
+            commandException.setMsgForUser("Invalid film parameters");
+            throw commandException;
         }
     }
 

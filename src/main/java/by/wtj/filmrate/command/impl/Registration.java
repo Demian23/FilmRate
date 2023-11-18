@@ -31,8 +31,11 @@ public class Registration implements Command {
                 request.getParameter(RequestParameterName.USER_PASSWORD), request.getParameter(RequestParameterName.USER_MAIL));
         if(isValidUserData(newUser))
             return newUser;
-        else
-            throw new CommandException("Wrong data");
+        else{
+            CommandException commandException = new CommandException();
+            commandException.setMsgForUser("Wrong data");
+            throw commandException;
+        }
     }
 
     private boolean isValidUserData(NewUser newUser){

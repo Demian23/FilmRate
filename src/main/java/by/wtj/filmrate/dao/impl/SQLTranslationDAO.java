@@ -47,8 +47,11 @@ public class SQLTranslationDAO implements TranslationDAO{
         closable.add(rs);
         if(rs.next()){
             translation.setTranslation(rs.getString("translation"));
-        }else
-            throw new DAOException("No such translation available!");
+        }else {
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("No such translation for textId: " + translation.getTextEntityId());
+            throw daoException;
+        }
     }
 
     @Override
@@ -73,8 +76,11 @@ public class SQLTranslationDAO implements TranslationDAO{
         closable.add( rs);
        if(rs.next()){
            return rs.getInt("original_language_id");
-       }else
-           throw new DAOException("No such text entity!");
+       }else{
+           DAOException daoException = new DAOException();
+           daoException.setMsgForUser("No text entity for textId: " + textEntityID);
+           throw daoException;
+       }
    }
 
     @Override

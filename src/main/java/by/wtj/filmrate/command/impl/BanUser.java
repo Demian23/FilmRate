@@ -26,7 +26,9 @@ public class BanUser implements Command {
             Admin currentAdmin = (Admin) session.getAttribute(SessionAttributes.CURRENT_USER);
             banUser(currentAdmin, chosenUser.get(), userDAO);
         }else{
-            throw new CommandException("No user with id: " + chosenUserId);
+            CommandException commandException = new CommandException();
+            commandException.setMsgForUser("No user with id: " + chosenUserId);
+            throw commandException;
         }
         return JspPageName.adminUsers;
     }

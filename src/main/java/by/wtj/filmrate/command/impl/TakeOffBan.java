@@ -25,23 +25,30 @@ public class TakeOffBan implements Command {
         if(chosenUser.isPresent()){
             takeOffUserBan(chosenUser.get(), userDAO);
         }else{
-            throw new CommandException("No user with id: " + chosenUserId);
+            CommandException commandException = new CommandException();
+            commandException.setMsgForUser("No user with id: " + chosenUserId);
+            throw commandException;
         }
         return JspPageName.adminUsers;
     }
 
     private void takeOffUserBan(UserWithBan userWithBan, UserDAO userDAO) throws CommandException {
-        boolean isTakeOff = false;
-        try{
-            isTakeOff = userDAO.takeOffBan(userWithBan.getUser().getUserId());
-        }catch(DAOException e){
-            throw new CommandException(e);
-        }
-        if(isTakeOff){
-            userWithBan.setBan(false);
-            userWithBan.setBannedInfo(null);
-        }else{
-            throw new CommandException("Ban can't be taken off");
+        if(userWithBan.isBan()){
+            boolean isTakeOff = false;
+            try{
+                isTakeOff = userDAO.takeOffBan(userWithBan.getUser().getUserId());
+            }catch(DAOException e){
+                throw new CommandException(e);
+            }
+            if(isTakeOff){
+                userWithBan.setBan(false);
+                userWithBan.setBannedInfo(null);
+            }else{
+                CommandException commandException = new CommandException();
+                commandException.setMsgForUser("Ban can't be taken off for: " + userWithBan.getUser().getName());
+                throw commandException;
+            }
+
         }
     }
 

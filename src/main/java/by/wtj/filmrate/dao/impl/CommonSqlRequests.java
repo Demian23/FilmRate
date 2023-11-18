@@ -3,6 +3,7 @@ package by.wtj.filmrate.dao.impl;
 import by.wtj.filmrate.bean.BannedUser;
 import by.wtj.filmrate.bean.TextEntity;
 import by.wtj.filmrate.dao.exception.DAOException;
+import lombok.Data;
 
 import java.sql.*;
 import java.util.Calendar;
@@ -20,7 +21,9 @@ public class CommonSqlRequests {
         if(rs.next()){
             return rs.getString("name");
         }else{
-            throw new DAOException("No such user with id: " + userId);
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("No user with id: " + userId);
+            throw daoException;
         }
     }
     static public TextEntity getTextEntity(Connection con, AutoClosableList closable, int textEntityId) throws SQLException, DAOException {
@@ -37,7 +40,9 @@ public class CommonSqlRequests {
             entity.setOriginalLangID(rs.getInt("original_language_id"));
             entity.setTextEntity(rs.getString("original_text"));
         }else{
-            throw new DAOException("No such text entity with id: " + textEntityId);
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("No text entity with id: " + textEntityId);
+            throw daoException;
         }
         return entity;
     }
@@ -53,7 +58,9 @@ public class CommonSqlRequests {
             int userId = rs.getInt("user_id");
             return getUserNameById(userId, con, closableList);
         }else{
-            throw new DAOException("No such admin with id: " + adminId);
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("No admin with id: " + adminId);
+            throw daoException;
         }
     }
     static public String getUserNameById(int userId, Connection con, AutoClosableList list) throws SQLException, DAOException {
@@ -66,14 +73,17 @@ public class CommonSqlRequests {
         if(rs.next())
             return rs.getString("name");
         else{
-            throw new DAOException("No such name for user_id: " + userId);
+            DAOException daoException = new DAOException();
+            daoException.setMsgForUser("No user name with id: " + userId);
+            throw daoException;
         }
     }
 
     static public void addTextEntity(TextEntity entity, Connection con, AutoClosableList list) throws SQLException, DAOException {
         // TODO add check if exist
         setTextEntityId(entity, con, list);
-        if(entity.getTextEntityID() == 0) {
+        if(entity.getTextEntityID() == TextEntity.NO_ID) {
+            // text is unique, if try insert existing will be exception
             String sql = "INSERT INTO `text_entity` (`original_text`, `original_language_id`)" +
                     "VALUES(?, ?)";
 
@@ -85,7 +95,11 @@ public class CommonSqlRequests {
 
             int rowsAffected = preSt.executeUpdate();
             if (rowsAffected == 0) {
-                throw new DAOException("No entity was included");
+                DAOException daoException = new DAOException();
+                daoException.setMsgForUser("Can't add " + entity.getTextEntity());
+                daoException.setLogMsg("0 rows affected after " + preSt.toString());
+                daoException.addCauseModule(CommonSqlRequests.class.getName()+"."+ CommonSqlRequests.class.getEnclosingMethod().getName());
+                throw daoException;
             }
         }
     }
@@ -100,6 +114,8 @@ public class CommonSqlRequests {
         list.add(rs);
         if(rs.next()){
             entity.setTextEntityID(rs.getInt("text_entity_id"));
+        }else{
+            entity.setTextEntityID(TextEntity.NO_ID);
         }
     }
 }
