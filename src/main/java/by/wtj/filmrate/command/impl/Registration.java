@@ -29,16 +29,13 @@ public class Registration implements Command {
     private NewUser fillNewUser(HttpServletRequest request) throws CommandException {
         NewUser newUser = new NewUser(request.getParameter(RequestParameterName.USER_NAME),
                 request.getParameter(RequestParameterName.USER_PASSWORD), request.getParameter(RequestParameterName.USER_MAIL));
-        if(isValidUserData(newUser))
-            return newUser;
-        else{
-            CommandException commandException = new CommandException();
-            commandException.setMsgForUser("Wrong data");
-            throw commandException;
-        }
+        checkUser(newUser);
+        return newUser;
     }
 
-    private boolean isValidUserData(NewUser newUser){
-        return newUser.getNewPassword() != null && newUser.getUserName() != null && newUser.getMail() != null;
+    private void checkUser(NewUser newUser) throws CommandException {
+        CommandsComplementary.checkEmptyValue(newUser.getUserName(), "User name");
+        CommandsComplementary.checkEmptyValue(newUser.getNewPassword(), "User password");
+        CommandsComplementary.checkEmptyValue(newUser.getMail(), "User mail");
     }
 }

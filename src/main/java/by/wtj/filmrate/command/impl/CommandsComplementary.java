@@ -58,4 +58,20 @@ public class CommandsComplementary {
             return Optional.empty();
         }
     }
+    static public void checkTimeFilmParam(String value, String pattern, String fieldName) throws CommandException {
+        checkEmptyValue(value, fieldName);
+        DateTimeValidator durationValidator = new DateTimeValidator(pattern);
+        if(!durationValidator.isValid(value)){
+            CommandException commandException = new CommandException();
+            commandException.setMsgForUser(value + " must be in format " + pattern);
+            throw commandException;
+        }
+    }
+    public static void checkEmptyValue(String value, String fieldName) throws CommandException {
+        if(value.isEmpty()) {
+            CommandException commandException = new CommandException();
+            commandException.setMsgForUser(fieldName + " can't be empty");
+            throw commandException;
+        }
+    }
 }

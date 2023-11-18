@@ -22,24 +22,19 @@ public class Authorization implements Command {
     @Override
     public String execute(HttpServletRequest request) throws CommandException {
         UserCredentials credentials = setUserCredentials(request);
-        if(isValidUserCredentials(credentials)){
-            HttpSession session = request.getSession();
-            UserWithBan user = retrieveUser(credentials);
-            if(!user.isBan()){
-                redirect = true;
-                trySetAllLanguagesInSession(session);
-                setUserAccessInSession(user.getUser(), session);
-                session.setAttribute(RequestParameterName.commandName, CommandName.FillFilmsInUserPage.name());
-                return JspPageName.controller;
-            }else{
-                redirect = false;
-                request.setAttribute(RequestParameterName.BANNED, user.getBannedInfo());
-                return JspPageName.bannedUserPage;
-            }
+        checkUserCredentials(credentials);
+        HttpSession session = request.getSession();
+        UserWithBan user = retrieveUser(credentials);
+        if(!user.isBan()){
+            redirect = true;
+            trySetAllLanguagesInSession(session);
+            setUserAccessInSession(user.getUser(), session);
+            session.setAttribute(RequestParameterName.commandName, CommandName.FillFilmsInUserPage.name());
+            return JspPageName.controller;
         }else{
-            CommandException commandException = new CommandException();
-            commandException.setMsgForUser("Invalid user credentials");
-            throw commandException;
+            redirect = false;
+            request.setAttribute(RequestParameterName.BANNED, user.getBannedInfo());
+            return JspPageName.bannedUserPage;
         }
     }
 
@@ -97,12 +92,8 @@ public class Authorization implements Command {
         }
     }
 
-    private boolean isValidUserCredentials(UserCredentials credentials){
-        //TODO for testing
-        if(credentials.getName().isEmpty() && credentials.getPasswordHash().isEmpty()){
-            credentials.setName("egor");
-            credentials.setPasswordHash("1212");
-        }
-        return true;
+    private void checkUserCredentials(UserCredentials credentials) throws CommandException {
+        CommandsComplementary.checkEmptyValue(credentials.getName(), "User name");
+        CommandsComplementary.checkEmptyValue(credentials.getPasswordHash(), "User password");
     }
 }
