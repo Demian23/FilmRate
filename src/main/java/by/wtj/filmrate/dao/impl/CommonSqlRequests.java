@@ -94,7 +94,7 @@ public class CommonSqlRequests {
             if (rowsAffected == 0) {
                 DAOException daoException = new DAOException();
                 daoException.setMsgForUser("Can't add " + entity.getTextEntity());
-                daoException.setLogMsg("0 rows affected after " + preSt.toString());
+                daoException.setLogMsg("0 rows affected after " + preSt);
                 daoException.addCauseModule(CommonSqlRequests.class.getName()+"."+ CommonSqlRequests.class.getEnclosingMethod().getName());
                 throw daoException;
             }

@@ -13,7 +13,7 @@ import java.util.*;
 public class SQLUserDAO implements UserDAO {
 
     static private ConnectionPool pool = null;
-    Access accessToDataBase;
+    private final Access accessToDataBase;
     public SQLUserDAO(Access access, ConnectionPool poolInstance){
         accessToDataBase = access;
         if(pool == null)
@@ -58,7 +58,7 @@ public class SQLUserDAO implements UserDAO {
         if(rowsAffected == 0){
             DAOException daoException = new DAOException();
             daoException.setMsgForUser("Can't add user: " + user.getUserName());
-            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.setLogMsg("0 rows affected after " + preSt);
             daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
             throw daoException;
         }
@@ -110,7 +110,7 @@ public class SQLUserDAO implements UserDAO {
         }else{
             DAOException daoException = new DAOException();
             daoException.setMsgForUser("Mail: " + mail + " already exist!");
-            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.setLogMsg("0 rows affected after " + preSt);
             daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
             throw daoException;
         }
@@ -146,8 +146,12 @@ public class SQLUserDAO implements UserDAO {
             UserWithBan user = new UserWithBan();
             user.setUser(newUser);
             Optional<BannedUser> bannedUser = retrieveBannedUserById(newUser.getUserId(), con, closableList);
-            user.setBan(bannedUser.isPresent());
-            bannedUser.ifPresent(user::setBannedInfo);
+            if(bannedUser.isPresent()){
+                bannedUser.get().setAdminBannedName(CommonSqlRequests.getAdminName(
+                    bannedUser.get().getAdminBannedId(), con, closableList));
+                user.setBan(true);
+                bannedUser.ifPresent(user::setBannedInfo);
+            }
             return Optional.of(user);
         } else {
             return Optional.empty();
@@ -283,7 +287,7 @@ public class SQLUserDAO implements UserDAO {
         }else{
             DAOException daoException = new DAOException();
             daoException.setMsgForUser("Can't ban user with id: " + userId);
-            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.setLogMsg("0 rows affected after " + preSt);
             daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
             throw daoException;
         }

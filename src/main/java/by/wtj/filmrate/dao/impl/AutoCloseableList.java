@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AutoCloseableList implements AutoCloseable{
-    List<AutoCloseable> objectsToClose;
+    private final List<AutoCloseable> objectsToClose;
     public AutoCloseableList(){objectsToClose = new ArrayList<>();}
 
     void add(AutoCloseable obj){objectsToClose.add(obj);}

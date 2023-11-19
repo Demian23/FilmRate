@@ -7,5 +7,4 @@ public class UserWithBan {
     User user;
     BannedUser bannedInfo;
     boolean ban;
-    public boolean isBan(){return ban;}
 }

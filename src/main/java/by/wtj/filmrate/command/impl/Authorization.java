@@ -55,9 +55,11 @@ public class Authorization implements Command {
         if(admin.isPresent()){
             session.setAttribute(SessionAttributes.CURRENT_ACCESS, Access.Admin);
             session.setAttribute(SessionAttributes.CURRENT_USER, admin.get());
+            session.setAttribute(SessionAttributes.CURRENT_USER_NAME, admin.get().getUser().getName());
         }else{
             session.setAttribute(SessionAttributes.CURRENT_ACCESS, Access.User);
             session.setAttribute(SessionAttributes.CURRENT_USER, user);
+            session.setAttribute(SessionAttributes.CURRENT_USER_NAME, user.getName());
         }
     }
 

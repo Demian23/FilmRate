@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <c:if test="${sessionScope.get(\"marksToCurrentFilm\") != null}">
     <c:forEach items="${sessionScope.get(\"marksToCurrentFilm\")}" var="mark">
         <ul>

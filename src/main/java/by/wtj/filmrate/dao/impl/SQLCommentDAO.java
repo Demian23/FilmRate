@@ -67,7 +67,7 @@ public class SQLCommentDAO implements CommentDAO {
         }else {
             DAOException daoException = new DAOException();
             daoException.setMsgForUser("Can't add " + comment.getText());
-            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.setLogMsg("0 rows affected after " + preSt);
             daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
             throw daoException;
         }
@@ -106,7 +106,7 @@ public class SQLCommentDAO implements CommentDAO {
         }else {
             DAOException daoException = new DAOException();
             daoException.setMsgForUser("Can't update " + comment.getText());
-            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.setLogMsg("0 rows affected after " + preSt);
             daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
             throw daoException;
         }

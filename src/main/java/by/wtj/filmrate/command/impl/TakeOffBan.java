@@ -1,10 +1,7 @@
 package by.wtj.filmrate.command.impl;
 
-import by.wtj.filmrate.bean.Access;
-import by.wtj.filmrate.bean.Admin;
 import by.wtj.filmrate.bean.UserWithBan;
 import by.wtj.filmrate.command.Command;
-import by.wtj.filmrate.command.SessionAttributes;
 import by.wtj.filmrate.command.exception.CommandException;
 import by.wtj.filmrate.controller.JspPageName;
 import by.wtj.filmrate.controller.RequestParameterName;
@@ -34,7 +31,7 @@ public class TakeOffBan implements Command {
 
     private void takeOffUserBan(UserWithBan userWithBan, UserDAO userDAO) throws CommandException {
         if(userWithBan.isBan()){
-            boolean isTakeOff = false;
+            boolean isTakeOff;
             try{
                 isTakeOff = userDAO.takeOffBan(userWithBan.getUser().getUserId());
             }catch(DAOException e){

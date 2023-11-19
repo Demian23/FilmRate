@@ -9,7 +9,7 @@ public interface Command {
      * @return destination of response
      * @throws CommandException exception for command layer
      */
-    public String execute(HttpServletRequest request) throws CommandException;
+    String execute(HttpServletRequest request) throws CommandException;
 
     /**
      * @return true if redirect to result of execute should be performed

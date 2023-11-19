@@ -11,7 +11,6 @@ import by.wtj.filmrate.dao.exception.DAOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.List;
 import java.util.Optional;
 
 public class BanUser implements Command {

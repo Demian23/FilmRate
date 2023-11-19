@@ -11,14 +11,14 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 
 public class ConnectionPoolWithSpecificAccess {
-    private BlockingQueue<Connection> connections;
-    private BlockingQueue<Connection> givenAwayConnections;
+    private final BlockingQueue<Connection> connections;
+    private final BlockingQueue<Connection> givenAwayConnections;
     ConnectionCredentials credentials;
     private final Access access;
-    static private int connnectionSize;
+    static private int connectionSize;
 
     public ConnectionPoolWithSpecificAccess(Access access, int connectionsAmount, ConnectionCredentials credentials){
-        connnectionSize = connectionsAmount;
+        connectionSize = connectionsAmount;
         connections = new ArrayBlockingQueue<>(connectionsAmount);
         givenAwayConnections = new ArrayBlockingQueue<>(connectionsAmount);
         this.access = access;
@@ -27,9 +27,9 @@ public class ConnectionPoolWithSpecificAccess {
 
     public void initPoolData() throws ConnectionPoolException {
         try{
-            for(int i = 0; i < connnectionSize; i++){
+            for(int i = 0; i < connectionSize; i++){
                 Connection connection = DriverManager.getConnection(credentials.url, credentials.login, credentials.password);
-                PooledConnection pooledConnection = new PooledConnection(connection, access);
+                PooledConnection pooledConnection = new PooledConnection(connection);
                 connections.add(pooledConnection);
             }
         } catch (SQLException e) {
@@ -81,7 +81,7 @@ public class ConnectionPoolWithSpecificAccess {
     private class PooledConnection implements Connection{
         private final Connection connection;
 
-        public PooledConnection(Connection con, Access access) throws SQLException {
+        public PooledConnection(Connection con) throws SQLException {
             connection = con;
             connection.setAutoCommit(true);
         }

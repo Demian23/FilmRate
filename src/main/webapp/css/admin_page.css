@@ -1,13 +1,13 @@
-body{
-    background: bisque;
-}
 a{
     text-decoration: none;
-    color: cornflowerblue;
+    color: darkslateblue;
 }
 
+body{
+    background: rosybrown;
+}
 a:hover{
-    color: indianred;
+    color: darkgreen;
 }
 
 .films_table{
@@ -21,6 +21,7 @@ a:hover{
     border: 3px solid mediumpurple;
 }
 .user_header{
+    flex: 6;
     display: flex;
     width: 100%;
     font-family: "American Typewriter", serif;
@@ -36,10 +37,12 @@ a:hover{
 
 .user_header_logout{
     flex: 1;
-    background: aliceblue;
     font-size: x-large;
 }
-.user_header_logout:active {
+button{
+    background: moccasin;
+}
+button:active {
     box-shadow: 0 5px #666;
     transform: translateY(1px);
 }
@@ -50,7 +53,6 @@ a:hover{
 
 .user_header_main_page{
     flex: 1;
-    background: aliceblue;
     font-size: large;
 }
 
@@ -71,4 +73,25 @@ a:hover{
     flex: 1;
     margin: auto;
     width: 50%;
+}
+
+.admin_header{
+    display: flex;
+}
+
+.admin_header_controls{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.admin_header_users{
+    margin: auto;
+    font-size: large;
+}
+
+.admin_header_add_film{
+    margin: auto;
+    font-size: large;
 }

@@ -63,10 +63,6 @@ public class Controller extends HttpServlet {
         }
     }
 
-    private void errorMessageDirectlyFromResponse(HttpServletResponse response) throws IOException {
-        response.setContentType("text/html");
-        response.getWriter().println("Fatal error");
-    }
     private String tryGetCommandFromSession(HttpServletRequest request){
         HttpSession session = request.getSession();
         String result = null;

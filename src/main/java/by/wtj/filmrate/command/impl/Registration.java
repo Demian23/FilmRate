@@ -6,7 +6,6 @@ import by.wtj.filmrate.command.Command;
 import by.wtj.filmrate.command.exception.CommandException;
 import by.wtj.filmrate.controller.JspPageName;
 import by.wtj.filmrate.controller.RequestParameterName;
-import by.wtj.filmrate.dao.DAOFactory;
 import by.wtj.filmrate.dao.UserDAO;
 import by.wtj.filmrate.dao.exception.DAOException;
 import javax.servlet.http.HttpServletRequest;

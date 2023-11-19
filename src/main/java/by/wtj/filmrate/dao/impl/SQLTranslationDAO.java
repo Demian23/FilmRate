@@ -14,7 +14,7 @@ import java.util.List;
 public class SQLTranslationDAO implements TranslationDAO{
     static private ConnectionPool pool = null;
 
-    Access accessToDataBase;
+    private final Access accessToDataBase;
     public SQLTranslationDAO(Access access, ConnectionPool poolInstance){
         accessToDataBase = access;
         if(pool == null){
@@ -92,7 +92,7 @@ public class SQLTranslationDAO implements TranslationDAO{
     }
 
 
-    private List<Language> queryAllLanguages(AutoCloseableList closable) throws DAOException, SQLException, ConnectionPoolException {
+    private List<Language> queryAllLanguages(AutoCloseableList closable) throws SQLException, ConnectionPoolException {
         Connection con = pool.takeConnectionWithAccess(accessToDataBase);
         closable.add(con);
 

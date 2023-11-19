@@ -1,18 +1,14 @@
 package by.wtj.filmrate.command.impl;
 
-import by.wtj.filmrate.bean.Access;
 import by.wtj.filmrate.bean.CompleteFilmInfo;
 import by.wtj.filmrate.bean.UserComment;
 import by.wtj.filmrate.bean.UserMark;
 import by.wtj.filmrate.command.Command;
-import by.wtj.filmrate.command.CommandExecutor;
 import by.wtj.filmrate.command.SessionAttributes;
 import by.wtj.filmrate.command.exception.CommandException;
 import by.wtj.filmrate.controller.JspPageName;
 import by.wtj.filmrate.controller.RequestParameterName;
 import by.wtj.filmrate.dao.CommentDAO;
-import by.wtj.filmrate.dao.DAOFactory;
-import by.wtj.filmrate.dao.FilmDAO;
 import by.wtj.filmrate.dao.MarkDAO;
 import by.wtj.filmrate.dao.exception.DAOException;
 

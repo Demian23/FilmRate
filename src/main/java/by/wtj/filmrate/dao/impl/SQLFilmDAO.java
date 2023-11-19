@@ -13,7 +13,7 @@ import java.util.List;
 
 public class SQLFilmDAO implements FilmDAO {
     static private ConnectionPool pool = null;
-    Access accessToDataBase;
+    private final Access accessToDataBase;
 
     public SQLFilmDAO(Access access, ConnectionPool poolInstance) {
         accessToDataBase = access;
@@ -89,7 +89,6 @@ public class SQLFilmDAO implements FilmDAO {
             completeFilmInfo.setFilm(createFilm(rs));
             completeFilmInfo.getFilm().setText(
                     CommonSqlRequests.getTextEntity(con, closable, rs.getInt("text_entity_id")));
-            getFilmDetails(completeFilmInfo, rs);
             return completeFilmInfo;
         } else {
             DAOException daoException = new DAOException();
@@ -137,13 +136,9 @@ public class SQLFilmDAO implements FilmDAO {
         if(rowsAffected == 0){
             DAOException daoException = new DAOException();
             daoException.setMsgForUser("Can't add film: " + newFilm.getText().getTextEntity());
-            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.setLogMsg("0 rows affected after " + preSt);
             daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
             throw daoException;
         }
-    }
-
-    private void getFilmDetails(CompleteFilmInfo film, ResultSet rs) throws SQLException {
-        //TODO if universe id not null get universe name
     }
 }

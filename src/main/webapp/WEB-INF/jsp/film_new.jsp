@@ -1,10 +1,11 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <html>
 <head>
-    <title>FilmRate/Admin/NewFilm</title>
+    <title>FilmRate/${sessionScope.get("currentUserName")}/NewFilm</title>
 </head>
 <header>
   <%@include file="admin_header.jsp"%>
+  <link href="css/admin_page.css" rel="stylesheet" />
 </header>
 <body>
   <h1>Film inserter</h1>

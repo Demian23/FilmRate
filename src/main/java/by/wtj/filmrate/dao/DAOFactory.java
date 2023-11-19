@@ -1,14 +1,12 @@
 package by.wtj.filmrate.dao;
 
 import by.wtj.filmrate.bean.Access;
-import by.wtj.filmrate.dao.connectionpool.ConnectionCredentials;
 import by.wtj.filmrate.dao.connectionpool.ConnectionPool;
 import by.wtj.filmrate.dao.connectionpool.exception.ConnectionPoolException;
 import by.wtj.filmrate.dao.exception.DAOException;
 import by.wtj.filmrate.dao.impl.*;
 import lombok.Getter;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Map.*;

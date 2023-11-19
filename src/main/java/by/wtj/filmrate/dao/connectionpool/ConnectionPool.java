@@ -2,8 +2,6 @@ package by.wtj.filmrate.dao.connectionpool;
 
 import by.wtj.filmrate.bean.Access;
 import by.wtj.filmrate.dao.connectionpool.exception.ConnectionPoolException;
-import by.wtj.filmrate.dao.exception.DAOException;
-import lombok.Getter;
 
 import java.sql.*;
 import java.util.*;
@@ -14,7 +12,7 @@ public class ConnectionPool {
     /**
      * can be 3 types of access to DB, the best granted is Admin
      */
-    Map<Access, ConnectionPoolWithSpecificAccess> connectionPools;
+    final Map<Access, ConnectionPoolWithSpecificAccess> connectionPools;
 
     private ConnectionPool(){
         DBResourceManager dbResourceManager = DBResourceManager.getInstance();

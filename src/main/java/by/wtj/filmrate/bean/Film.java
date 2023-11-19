@@ -3,8 +3,6 @@ package by.wtj.filmrate.bean;
 
 import lombok.Data;
 
-import java.time.LocalTime;
-import java.util.List;
 
 @Data
 public class Film {

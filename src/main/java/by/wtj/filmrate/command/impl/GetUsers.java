@@ -1,7 +1,5 @@
 package by.wtj.filmrate.command.impl;
 
-import by.wtj.filmrate.bean.Access;
-import by.wtj.filmrate.bean.NewUser;
 import by.wtj.filmrate.bean.UserWithBan;
 import by.wtj.filmrate.command.Command;
 import by.wtj.filmrate.command.SessionAttributes;

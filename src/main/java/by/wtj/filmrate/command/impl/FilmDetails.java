@@ -33,9 +33,8 @@ public class FilmDetails implements Command {
             int languageId = (Integer)session.getAttribute(SessionAttributes.CURRENT_LANG_ID);
             completeFilmInfo = fillFilm(currentAccess, filmId, languageId);
         }
-        fillAdditionalFilmInfo(completeFilmInfo);
-        fillUserMark(currentAccess, completeFilmInfo, userId);
-        fillUserComment(currentAccess, completeFilmInfo, userId);
+        fillUserMark(completeFilmInfo, userId);
+        fillUserComment(completeFilmInfo, userId);
         // TODO should clean this some time
         session.setAttribute(SessionAttributes.COMPLETE_FILM_INFO, completeFilmInfo);
         return JspPageName.filmPage;
@@ -66,10 +65,7 @@ public class FilmDetails implements Command {
         }
         return completeFilmInfo;
     }
-    private void fillAdditionalFilmInfo(CompleteFilmInfo completeFilmInfo){
-
-    }
-    private void fillUserMark(Access access, CompleteFilmInfo completeFilmInfo, int userId) throws CommandException {
+    private void fillUserMark(CompleteFilmInfo completeFilmInfo, int userId) throws CommandException {
         UserMark mark = new UserMark();
         mark.setFilmId(completeFilmInfo.getFilm().getFilmID());
         mark.setUserId(userId);
@@ -80,7 +76,7 @@ public class FilmDetails implements Command {
         }
         completeFilmInfo.setMark(mark);
     }
-    private void fillUserComment(Access access, CompleteFilmInfo completeFilmInfo, int userId) throws CommandException {
+    private void fillUserComment(CompleteFilmInfo completeFilmInfo, int userId) throws CommandException {
         UserComment comment = new UserComment();
         comment.setFilmId(completeFilmInfo.getFilm().getFilmID());
         comment.setUserId(userId);

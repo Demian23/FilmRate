@@ -1,8 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>FilmRate</title>
+    <title>FilmRate/Ban</title>
 </head>
 <body>
 <h1 style="color: red">You have ban!</h1>

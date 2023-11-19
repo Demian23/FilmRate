@@ -2,11 +2,12 @@
 <%@ page import="by.wtj.filmrate.bean.CompleteFilmInfo" %>
 <%@ page import="by.wtj.filmrate.controller.RequestParameterName" %>
 <%@ page import="by.wtj.filmrate.bean.UserComment" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" session="true"%>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>${sessionScope.get("filmInfo").film.localisedText}</title>
+    <title>FilmRate/${sessionScope.get("filmInfo").film.text.textEntity}</title>
+    <link href="css/user_page.css" rel="stylesheet" />
 </head>
 <header>
     <%@include file="user_header.jsp"%>

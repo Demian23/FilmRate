@@ -1,6 +1,5 @@
 package by.wtj.filmrate.command.impl;
 
-import by.wtj.filmrate.bean.UserComment;
 import by.wtj.filmrate.bean.UserMark;
 import by.wtj.filmrate.command.Command;
 import by.wtj.filmrate.command.SessionAttributes;

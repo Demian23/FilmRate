@@ -34,7 +34,7 @@ public class SQLMarkDAO implements MarkDAO {
         }
     }
 
-    private int queryUserMark(Connection con, AutoCloseableList closable, UserMark mark) throws DAOException, SQLException, ConnectionPoolException {
+    private int queryUserMark(Connection con, AutoCloseableList closable, UserMark mark) throws SQLException{
         String sql = "SELECT `value` FROM `m2m_user_film_mark` WHERE `user_id`= ? AND `film_id` = ?";
 
         PreparedStatement preSt = con.prepareStatement(sql);
@@ -77,7 +77,7 @@ public class SQLMarkDAO implements MarkDAO {
         if (rowsAffected == 0) {
             DAOException daoException = new DAOException();
             daoException.setMsgForUser("Can't update mark: " + mark.getMark());
-            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.setLogMsg("0 rows affected after " + preSt);
             daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
             throw daoException;
         }
@@ -97,7 +97,7 @@ public class SQLMarkDAO implements MarkDAO {
         if (rowsAffected == 0) {
             DAOException daoException = new DAOException();
             daoException.setMsgForUser("Can't add mark: " + mark.getMark());
-            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.setLogMsg("0 rows affected after " + preSt);
             daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
             throw daoException;
         }
@@ -127,7 +127,7 @@ public class SQLMarkDAO implements MarkDAO {
         } else {
             DAOException daoException = new DAOException();
             daoException.setMsgForUser("Can't add mark: " + mark.getMark() + "to film: " + film.getText().getTextEntity());
-            daoException.setLogMsg("0 rows affected after " + preSt.toString());
+            daoException.setLogMsg("0 rows affected after " + preSt);
             daoException.addCauseModule(daoException.getStackTrace()[0].getModuleName()+"."+daoException.getStackTrace()[0].getMethodName());
             throw daoException;
         }

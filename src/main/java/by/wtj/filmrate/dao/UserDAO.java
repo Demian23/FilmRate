@@ -4,7 +4,6 @@ import by.wtj.filmrate.bean.*;
 import by.wtj.filmrate.dao.exception.DAOException;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface UserDAO {

@@ -1,7 +1,6 @@
 package by.wtj.filmrate.dao;
 
 import by.wtj.filmrate.bean.Language;
-import by.wtj.filmrate.bean.TextEntity;
 import by.wtj.filmrate.bean.Translation;
 import by.wtj.filmrate.dao.exception.DAOException;
 
