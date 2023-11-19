@@ -16,4 +16,5 @@ public class Film {
     String ageRating;
     int wholeMarksSum;
     int wholeMarksAmount;
+    String averageMark;
 }

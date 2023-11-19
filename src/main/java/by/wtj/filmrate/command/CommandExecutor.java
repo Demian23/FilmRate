@@ -20,7 +20,7 @@ public final class CommandExecutor {
         commandNameToCommand.put(CommandName.FilmDetails, new FilmDetails());
         commandNameToCommand.put(CommandName.ChangeLanguage, new ChangeLanguage());
         commandNameToCommand.put(CommandName.SetUserMarkAndComment, new SetUserMarkAndComment());
-        commandNameToCommand.put(CommandName.AddCommentsToCurrentFilmInSession, new AddCommentsToCurrenFilmInSession());
+        commandNameToCommand.put(CommandName.AddCommentsToCurrentFilmInSession, new AddCommentsToCurrenFilm());
         commandNameToCommand.put(CommandName.AddMarksToCurrentFilmInSession, new AddMarksToCurrentFilmInSession());
         commandNameToCommand.put(CommandName.GetUsers, new GetUsers());
         commandNameToCommand.put(CommandName.TakeOffBan, new TakeOffBan());

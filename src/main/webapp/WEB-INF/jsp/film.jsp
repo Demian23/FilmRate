@@ -18,7 +18,7 @@
 <p>Launch date: ${sessionScope.get("filmInfo").film.launchDate}</p>
 <p>Duration: ${sessionScope.get("filmInfo").film.duration}</p>
 <p>Age rating: ${sessionScope.get("filmInfo").film.ageRating}</p>
-<p>Average mark: ${sessionScope.get("filmInfo").film.wholeMarksSum / sessionScope.get("filmInfo").film.wholeMarksAmount}</p>
+<p>Average mark: ${sessionScope.get("filmInfo").film.averageMark}</p>
 <form action="${pageContext.request.contextPath}/controller" method="post">
     <input type="hidden" name="command" value="SetUserMarkAndComment">
     <label>

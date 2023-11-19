@@ -8,6 +8,7 @@ import by.wtj.filmrate.dao.exception.DAOException;
 
 import java.io.IOException;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +60,10 @@ public class SQLFilmDAO implements FilmDAO {
         film.setUniverseID(resultSet.getInt("universe_id"));
         film.setWholeMarksAmount(resultSet.getInt("marks_amount"));
         film.setWholeMarksSum(resultSet.getInt("marks_whole_score"));
+        if(film.getWholeMarksAmount() != 0)
+            film.setAverageMark(new DecimalFormat("#.##").format((double) film.getWholeMarksSum()/ film.getWholeMarksAmount()));
+        else
+            film.setAverageMark("-");
         return film;
     }
 

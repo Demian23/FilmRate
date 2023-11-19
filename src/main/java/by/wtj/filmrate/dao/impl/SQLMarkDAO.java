@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,6 +125,10 @@ public class SQLMarkDAO implements MarkDAO {
         if (rowsAffected != 0) {
             film.setWholeMarksSum(film.getWholeMarksSum() + wholeScoreAddition);
             film.setWholeMarksAmount(film.getWholeMarksAmount() + marksAmountAddition);
+            if(film.getWholeMarksAmount() != 0)
+                film.setAverageMark(new DecimalFormat("#.##").format((double) film.getWholeMarksSum()/ film.getWholeMarksAmount()));
+            else
+                film.setAverageMark("-");
         } else {
             DAOException daoException = new DAOException();
             daoException.setMsgForUser("Can't add mark: " + mark.getMark() + "to film: " + film.getText().getTextEntity());

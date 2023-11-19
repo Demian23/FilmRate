@@ -77,11 +77,18 @@ public class FillFilmsInUserPage implements Command {
                 Translation translation = new Translation();
                 translation.setTextEntityId(filmText.getTextEntityID());
                 translation.setLanguageId(languageId);
-                translationDAO.getTranslation(translation);
+                try {
+                    translationDAO.getTranslation(translation);
+                }catch(DAOException e){
+                    translation.setTranslation(film.getText().getTextEntity());
+                    translation.setLanguageId(film.getText().getTextEntityID());
+                }
                 localisedText.setLocalisedText(translation.getTranslation());
+                localisedText.setLocalisedID(translation.getLanguageId());
+            }else{
+                localisedText.setLocalisedText(film.getText().getTextEntity());
+                localisedText.setLocalisedID(film.getText().getOriginalLangID());
             }
         }
-        if(localisedText.getLocalisedText() == null)
-            localisedText.setLocalisedText(filmText.getTextEntity());
     }
 }
